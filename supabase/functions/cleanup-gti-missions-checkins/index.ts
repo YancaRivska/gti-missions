@@ -80,25 +80,35 @@ Deno.serve(async (req: Request) => {
     }
 
     const nowIso = new Date().toISOString();
-    const { data: rows, error: selectError } = await supabase
-      .from("gti_missions_challenge_entries")
-      .select("id")
-      .not("photo_path", "is", null)
-      .lte("photo_expires_at", nowIso)
-      .limit(1000);
-    if (selectError) throw selectError;
+    const proofTables = [
+      "gti_missions_challenge_entries",
+      "gti_missions_water_entries",
+      "gti_missions_exercise_entries",
+    ];
+    let metadataCleared = 0;
 
-    if (rows?.length) {
-      const ids = rows.map((row: { id: string }) => row.id);
-      const { error: updateError } = await supabase
-        .from("gti_missions_challenge_entries")
-        .update({ photo_path: null, photo_expires_at: null })
-        .in("id", ids);
-      if (updateError) throw updateError;
+    for (const table of proofTables) {
+      const { data: rows, error: selectError } = await supabase
+        .from(table)
+        .select("id")
+        .not("photo_path", "is", null)
+        .lte("photo_expires_at", nowIso)
+        .limit(1000);
+      if (selectError) throw selectError;
+
+      if (rows?.length) {
+        const ids = rows.map((row: { id: string }) => row.id);
+        const { error: updateError } = await supabase
+          .from(table)
+          .update({ photo_path: null, photo_expires_at: null })
+          .in("id", ids);
+        if (updateError) throw updateError;
+        metadataCleared += rows.length;
+      }
     }
 
     return new Response(
-      JSON.stringify({ ok: true, removed, metadata_cleared: rows?.length ?? 0 }),
+      JSON.stringify({ ok: true, removed, metadata_cleared: metadataCleared }),
       { status: 200, headers },
     );
   } catch (error) {
