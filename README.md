@@ -10,7 +10,7 @@ Produção: <https://gti-missions-yanca-rivska.vercel.app/>
 - Tech Rat com frequência configurável de 3 a 7 dias.
 - Novos desafios publicados pela administração e exibidos automaticamente para a comunidade.
 - Check de desafios com foto capturada pela câmera e retenção máxima de 24 horas.
-- Foto de perfil em bucket privado, exibida somente para participantes autenticados.
+- Foto de perfil anexada da galeria ou capturada pela câmera, armazenada em bucket privado e exibida somente para participantes autenticados.
 - Ofensiva calculada pelos dias consecutivos em que o player conquistou XP.
 - Login, perfil, ranking, PWA e modo offline básico.
 
