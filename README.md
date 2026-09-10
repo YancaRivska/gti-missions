@@ -2,6 +2,8 @@
 
 Aplicativo web da comunidade Galera do TI para missões, hábitos, XP, selos e ranking mensal.
 
+Produção: <https://gti-missions-yanca-rivska.vercel.app/>
+
 ## Funcionalidades
 
 - AquaXP com meta fixa de 7 dias por semana.
@@ -29,7 +31,7 @@ Não abra `index.html` diretamente via `file://`, pois autenticação, Service W
 
 ## Deploy
 
-A Vercel pode publicar diretamente a raiz deste repositório, sem comando de build e sem diretório de saída. O arquivo `vercel.json` configura os cabeçalhos de segurança e `/api/health`.
+A Vercel publica automaticamente a raiz deste repositório a cada atualização da branch `main`, sem comando de build e sem diretório de saída. O arquivo `vercel.json` configura os cabeçalhos de segurança e `/api/health`.
 
 ## Supabase
 
