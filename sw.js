@@ -1,5 +1,5 @@
-const CACHE='gti-missions-v6';
-const CORE=['/','/style.css?v=1.2.2','/app.js?v=1.2.2','/manifest.webmanifest?v=1.2.2','/icon.svg','/offline.html'];
+const CACHE='gti-missions-v7';
+const CORE=['/','/style.css?v=1.2.3','/app.js?v=1.2.3','/manifest.webmanifest?v=1.2.3','/icon.svg','/offline.html'];
 const CORE_PATHS=new Set(['/style.css','/app.js','/manifest.webmanifest','/icon.svg','/offline.html']);
 
 self.addEventListener('install',event=>{
