@@ -3452,3 +3452,11 @@ body {
     linear-gradient(180deg,#06162d 0%,#020816 48%,#030b1a 100%) !important;
   background-attachment:fixed !important;
 }
+
+.auth-card > .link-btn,
+.auth-card > .forgot-link {
+  display:block;
+  width:100%;
+  margin-top:4px;
+  text-align:center;
+}
