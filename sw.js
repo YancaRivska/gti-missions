@@ -1,6 +1,6 @@
-const CACHE='gti-missions-v8';
-const CORE=['/','/style.css?v=1.2.4','/app.js?v=1.2.4','/manifest.webmanifest?v=1.2.4','/icon.svg','/offline.html'];
-const CORE_PATHS=new Set(['/style.css','/app.js','/manifest.webmanifest','/icon.svg','/offline.html']);
+const CACHE='gti-missions-v9';
+const CORE=['/','/style.css?v=2.0.0','/water-game.js?v=2.0.0','/app.js?v=2.0.0','/manifest.webmanifest?v=2.0.0','/assets/water/adventure-map-v1.webp','/icon.svg','/offline.html'];
+const CORE_PATHS=new Set(['/style.css','/water-game.js','/app.js','/manifest.webmanifest','/assets/water/adventure-map-v1.webp','/icon.svg','/offline.html']);
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).catch(()=>{}));

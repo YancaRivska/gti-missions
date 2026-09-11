@@ -7,6 +7,7 @@ Produção: <https://gti-missions-yanca-rivska.vercel.app/>
 ## Funcionalidades
 
 - AquaXP com meta fixa de 7 dias por semana.
+- Jornada visual AquaXP com mapa, quatro mundos, missões e conquistas alimentados pelo progresso real do player.
 - Tech Rat com frequência configurável de 3 a 7 dias.
 - Novos desafios publicados pela administração e exibidos automaticamente para a comunidade.
 - Check do AquaXP, Tech Rat e desafios com foto capturada pela câmera, sem galeria e com disponibilidade máxima de 24 horas.
@@ -16,7 +17,9 @@ Produção: <https://gti-missions-yanca-rivska.vercel.app/>
 
 ## Arquitetura
 
-O frontend é estático (`index.html`, `app.js` e `style.css`) e é publicado na Vercel. Autenticação, banco, RPCs, RLS, Storage e a limpeza automática das fotos usam Supabase.
+O frontend é estático (`index.html`, `app.js`, `water-game.js` e `style.css`) e é publicado na Vercel. Autenticação, banco, RPCs, RLS, Storage e a limpeza automática das fotos usam Supabase.
+
+A arte original do mapa AquaXP fica em `assets/water/adventure-map-v1.webp`. Ela foi criada especificamente para o GTI Missions e otimizada para carregamento em dispositivos móveis.
 
 O projeto Supabase ativo já está provisionado. A chave presente no frontend é a chave pública/publishable; chaves administrativas nunca devem ser adicionadas ao repositório.
 
