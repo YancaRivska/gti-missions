@@ -8,9 +8,9 @@ Produção: <https://gti-missions-yanca-rivska.vercel.app/>
 
 - AquaXP com meta fixa de 7 dias por semana.
 - Jornada visual AquaXP com mapa, quatro mundos, missões e conquistas alimentados pelo progresso real do player.
-- Tech Rat com frequência configurável de 3 a 7 dias.
+- RAT Tech com frequência configurável de 3 a 7 dias.
 - Novos desafios publicados pela administração e exibidos automaticamente para a comunidade.
-- Check do AquaXP, Tech Rat e desafios com foto capturada pela câmera, sem galeria e com disponibilidade máxima de 24 horas.
+- Check do AquaXP, RAT Tech e desafios com foto capturada pela câmera, sem galeria e com disponibilidade máxima de 24 horas.
 - Foto de perfil anexada da galeria ou capturada pela câmera, armazenada em bucket privado e exibida somente para participantes autenticados.
 - Ofensiva calculada pelos dias consecutivos em que o player conquistou XP.
 - Login, perfil, ranking, PWA e modo offline básico.

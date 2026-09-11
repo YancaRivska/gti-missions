@@ -1,6 +1,6 @@
-const CACHE='gti-missions-v9';
-const CORE=['/','/style.css?v=2.0.0','/water-game.js?v=2.0.0','/app.js?v=2.0.0','/manifest.webmanifest?v=2.0.0','/assets/water/adventure-map-v1.webp','/icon.svg','/offline.html'];
-const CORE_PATHS=new Set(['/style.css','/water-game.js','/app.js','/manifest.webmanifest','/assets/water/adventure-map-v1.webp','/icon.svg','/offline.html']);
+const CACHE='gti-missions-v10';
+const CORE=['/','/style.css?v=2.1.0','/water-game.js?v=2.1.0','/app.js?v=2.1.0','/manifest.webmanifest?v=2.1.0','/assets/water/adventure-map-v1.webp','/assets/mascot/chalote-hero-v1.webp','/assets/challenges/aquaxp/chalote-aquaxp-v1.webp','/assets/challenges/rat-tech/chalote-rat-tech-v1.webp','/assets/challenges/reading/chalote-reading-v1.webp','/assets/challenges/screen-free/chalote-screen-free-v1.webp','/icon.svg','/offline.html'];
+const CORE_PATHS=new Set(['/style.css','/water-game.js','/app.js','/manifest.webmanifest','/assets/water/adventure-map-v1.webp','/assets/mascot/chalote-hero-v1.webp','/assets/challenges/aquaxp/chalote-aquaxp-v1.webp','/assets/challenges/rat-tech/chalote-rat-tech-v1.webp','/assets/challenges/reading/chalote-reading-v1.webp','/assets/challenges/screen-free/chalote-screen-free-v1.webp','/icon.svg','/offline.html']);
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).catch(()=>{}));

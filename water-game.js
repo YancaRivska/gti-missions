@@ -83,10 +83,12 @@
           <div class="player-level">${progressBar(levelPct, `Progresso do nível ${currentLevel}`)}<small>${fmt(totalXp % 500)} / 500 XP para o próximo nível</small></div>
         </header>
 
-        <section class="water-titlebar">
-          <small>JORNADA AQUAXP</small>
+        <section class="water-titlebar water-hero-title">
+          <div><small>AQUAXP LEAGUE • JORNADA DA ÁGUA</small>
           <h1>Desafio da Água</h1>
-          <p>Cada gole leva você mais longe.</p>
+          <p>Água hoje. Mais energia para conquistar amanhã.</p>
+          <button class="game-cta aurora compact" id="quickWaterRegister" type="button">Registrar água →</button></div>
+          <img src="/assets/challenges/aquaxp/chalote-aquaxp-v1.webp" alt="Chalote segurando sua garrafa no AquaXP League" width="720" height="960">
         </section>
 
         <nav class="water-tabs" role="tablist" aria-label="Áreas do Desafio da Água">
@@ -98,10 +100,11 @@
         <div class="water-tab-panel" role="tabpanel" data-water-panel="map">
           <section class="adventure-map" aria-label="Mapa da jornada semanal AquaXP">
             <div class="map-atmosphere"></div>
+            <img class="map-chalote" src="/assets/challenges/aquaxp/chalote-aquaxp-v1.webp" alt="Chalote explorando o mapa AquaXP" width="720" height="960">
             <div class="map-heading"><span>JORNADA DA SEMANA</span><b>${weekDays}/7 marcos</b></div>
             ${worlds.map(world => worldNode(world, weekDays)).join('')}
             <div class="map-legend"><span><i class="completed"></i>Concluído</span><span><i class="active"></i>Atual</span><span><i class="locked"></i>Bloqueado</span></div>
-            <button class="game-cta gold" id="continueJourney" type="button">Continuar jornada</button>
+            <button class="game-cta aurora" id="continueJourney" type="button">Registrar água</button>
           </section>
 
           <section class="today-voyage game-panel">
@@ -166,7 +169,7 @@
       };
     });
 
-    document.querySelectorAll('[data-world-state="active"], #continueJourney').forEach(button => {
+    document.querySelectorAll('[data-world-state="active"], #continueJourney, #quickWaterRegister').forEach(button => {
       button.onclick = () => document.getElementById('waterCheck').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     });
 
