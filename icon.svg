@@ -1,17 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GTI Missions">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Chalote • GTI Missions">
   <defs>
-    <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#56e7ff"/>
-      <stop offset="1" stop-color="#0788bb"/>
-    </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#ffe49a"/>
-      <stop offset="1" stop-color="#ca801c"/>
-    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061f3f"/><stop offset=".55" stop-color="#080d27"/><stop offset="1" stop-color="#261047"/></linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8dce"/><stop offset=".5" stop-color="#ff42b8"/><stop offset="1" stop-color="#bb22d9"/></linearGradient>
+    <linearGradient id="visor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#09091c"/><stop offset=".45" stop-color="#1a175c"/><stop offset=".72" stop-color="#087ed4"/><stop offset="1" stop-color="#ed35d0"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
-  <rect width="512" height="512" rx="112" fill="#031321"/>
-  <circle cx="256" cy="256" r="177" fill="#06263e" stroke="url(#gold)" stroke-width="18"/>
-  <path d="M256 46l22 45 48 12-48 13-22 44-22-44-48-13 48-12z" fill="url(#gold)"/>
-  <path d="M256 133c-57 78-99 132-99 195a99 99 0 0 0 198 0c0-63-42-117-99-195z" fill="url(#ocean)" stroke="#b9f5ff" stroke-width="10"/>
-  <path d="M274 209l-72 119h52l-18 80 77-131h-50z" fill="#f9d578" stroke="#fff1bd" stroke-width="5" stroke-linejoin="round"/>
+  <rect width="512" height="512" rx="112" fill="url(#tile)"/>
+  <circle cx="256" cy="250" r="182" fill="none" stroke="#42dfff" stroke-opacity=".34" stroke-width="6"/>
+  <g fill="url(#pink)" stroke="#ff86e5" stroke-width="7" filter="url(#glow)">
+    <path d="M154 190C83 157 59 99 75 69c47 8 88 44 116 96z"/>
+    <path d="M141 241c-78-4-118-43-121-78 50-17 104 0 143 43z"/>
+    <path d="M158 293c-67 29-119 13-137-17 37-38 93-50 141-31z"/>
+    <path d="M358 190c71-33 95-91 79-121-47 8-88 44-116 96z"/>
+    <path d="M371 241c78-4 118-43 121-78-50-17-104 0-143 43z"/>
+    <path d="M354 293c67 29 119 13 137-17-37-38-93-50-141-31z"/>
+  </g>
+  <ellipse cx="256" cy="255" rx="148" ry="137" fill="url(#pink)" stroke="#ff9add" stroke-width="8"/>
+  <path d="M116 203c32-54 248-65 280 0l-13 92c-62 34-190 34-254 0z" fill="url(#visor)" stroke="#35e4ff" stroke-width="9"/>
+  <path d="M158 211c49-18 118-22 172-12" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="321" cy="229" r="10" fill="#ff73e8"/><circle cx="344" cy="247" r="6" fill="#56e7ff"/>
+  <path d="M191 330c38 35 92 35 130 0" fill="none" stroke="#7f165f" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="170" cy="311" r="9" fill="#b51d7f"/><circle cx="342" cy="311" r="9" fill="#b51d7f"/>
 </svg>
