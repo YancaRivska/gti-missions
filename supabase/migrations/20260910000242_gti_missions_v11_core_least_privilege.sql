@@ -1,0 +1,16 @@
+revoke all on public.gti_missions_profiles from authenticated;
+grant select,insert,update on public.gti_missions_profiles to authenticated;
+revoke all on public.gti_missions_water_entries from authenticated;
+grant select on public.gti_missions_water_entries to authenticated;
+revoke all on public.gti_missions_water_days from authenticated;
+grant select on public.gti_missions_water_days to authenticated;
+revoke all on public.gti_missions_exercise_entries from authenticated;
+grant select on public.gti_missions_exercise_entries to authenticated;
+revoke all on public.gti_missions_exercise_days from authenticated;
+grant select on public.gti_missions_exercise_days to authenticated;
+revoke all on public.gti_missions_exercise_weeks from authenticated;
+grant select on public.gti_missions_exercise_weeks to authenticated;
+revoke all on public.gti_missions_xp_events from authenticated;
+grant select on public.gti_missions_xp_events to authenticated;
+revoke all on public.gti_missions_weekly_badges from authenticated;
+grant select on public.gti_missions_weekly_badges to authenticated;
