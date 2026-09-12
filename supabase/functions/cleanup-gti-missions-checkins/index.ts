@@ -12,8 +12,12 @@ Deno.serve(async (req: Request) => {
 
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !serviceKey) {
+  const cleanupSecret = Deno.env.get("GTI_MISSIONS_CLEANUP_SECRET");
+  if (!url || !serviceKey || !cleanupSecret) {
     return new Response(JSON.stringify({ error: "server_config" }), { status: 500, headers });
+  }
+  if (req.headers.get("x-gti-cleanup-secret") !== cleanupSecret) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers });
   }
 
   const supabase = createClient(url, serviceKey, {
