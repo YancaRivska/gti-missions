@@ -107,7 +107,7 @@
     const [s,u]=await Promise.all([universeStats(),authUser()]);
     const weekPct=pct(s.exercise_week_days,s.exercise_week_target);
     app.innerHTML=shell(`<div class="world-screen rat-world-screen">
-      ${screenHead('⚡','Desafio RAT Tech','Treino. Movimento. Evolução.')}
+      ${screenHead('🏋️','Desafio RAT Tech','Treino. Movimento. Evolução.')}
       <section class="world-visual rat-visual"><div class="world-visual-glow"></div><img src="${ASSETS.rat}" alt="Chalote treinando com halter" width="720" height="960"><div class="hero-message"><b>Força é constância.</b><span>Seu corpo também merece evolução.</span></div></section>
       <section class="world-stat-grid"><div><span>🔥</span><b>${s.activity_streak||0}</b><small>dias seguidos</small></div><div><span>⚡</span><b>${fmt(s.rat_xp||0)}</b><small>XP RAT Tech</small></div><div><span>🏋</span><b>${s.exercise_week_days||0}/${s.exercise_week_target||3}</b><small>treinos</small></div></section>
       <section class="world-progress-card"><div><small>META DA SEMANA</small><b>${s.exercise_week_days||0} de ${s.exercise_week_target||3} dias de treino</b></div><span>${weekPct}%</span>${progressBar(weekPct,'Meta semanal de treino')}</section>
@@ -135,7 +135,7 @@
     const history=await challengeHistory(challenge.id,player.u.id),currentBook=history.find(row=>row.note)?.note||'Escolha sua próxima história';
     const dailyPct=pct(challenge.today_value,challenge.daily_target),weekPct=pct(challenge.week_completed_days,challenge.weekly_target_days);
     app.innerHTML=shell(`<div class="world-screen reading-world-screen">
-      ${screenHead('▣','Desafio da Leitura','Mais histórias. Grandes possibilidades.')}
+      ${screenHead('📖','Desafio da Leitura','Mais histórias. Grandes possibilidades.')}
       <section class="world-visual reading-visual"><img src="${ASSETS.reading}" alt="Chalote lendo em uma biblioteca cyber" width="720" height="960"><div class="world-visual-caption"><small>MINHA LEITURA ATUAL</small><b>${esc(currentBook)}</b><span>${fmt(challenge.today_value)} / ${fmt(challenge.daily_target)} páginas hoje</span>${progressBar(dailyPct,'Meta diária de leitura')}</div></section>
       <section class="world-stat-grid"><div><span>🔥</span><b>${s.reading_streak||0}</b><small>dias seguidos</small></div><div><span>▣</span><b>${fmt(s.reading_total_pages||0)}</b><small>páginas lidas</small></div><div><span>✦</span><b>${challenge.week_completed_days}/${challenge.weekly_target_days}</b><small>missões semana</small></div></section>
       <blockquote>“Ler é viajar sem sair do lugar.”</blockquote>
@@ -156,7 +156,7 @@
     const history=await challengeHistory(challenge.id,player.u.id),lastActivity=history.find(row=>row.note)?.note||'Um momento no mundo real';
     const dailyPct=pct(challenge.today_value,challenge.daily_target),weekPct=pct(challenge.week_completed_days,challenge.weekly_target_days);
     app.innerHTML=shell(`<div class="world-screen offline-world-screen">
-      ${screenHead('♧','Desafio Sem Tela','Mais presença. Uma vida mais real.')}
+      ${screenHead('🌿','Desafio Sem Tela','Mais presença. Uma vida mais real.')}
       <section class="world-visual offline-visual"><img src="${ASSETS.offline}" alt="Chalote meditando sem telas" width="720" height="960"><div class="offline-quote">“Desconectar também é um passo para ir mais longe.”</div></section>
       <section class="world-stat-grid"><div><span>🔥</span><b>${s.screen_free_streak||0}</b><small>dias seguidos</small></div><div><span>⌛</span><b>${fmt(s.screen_free_total_minutes||0)}</b><small>min sem telas</small></div><div><span>♧</span><b>${s.screen_free_total_days||0}</b><small>atividades reais</small></div></section>
       <section class="world-progress-card"><div><small>META DA SEMANA</small><b>${challenge.week_completed_days} de ${challenge.weekly_target_days} dias offline</b><p>${esc(lastActivity)}</p></div><span>${weekPct}%</span>${progressBar(weekPct,'Meta semanal sem tela')}</section>
@@ -220,7 +220,7 @@
     };
     const items=sets[current],unlocked=items.filter(item=>item.unlocked).length;
     app.innerHTML=shell(`<div class="achievement-screen">
-      ${screenHead('✦','Conquistas por Desafio','Cada hábito abre uma nova relíquia.','app')}
+      ${screenHead('💎','Conquistas por Desafio','Cada hábito abre uma nova relíquia.','app')}
       <nav class="world-tabs achievement-tabs">${[['global','Total'],['aqua','Água'],['rat-tech','RAT Tech'],['reading','Leitura'],['screen-free','Sem Tela']].map(([id,label])=>`<button class="${current===id?'active':''}" data-achievement="${id}">${label}</button>`).join('')}</nav>
       <section class="achievement-summary"><img src="${current==='aqua'?ASSETS.aqua:current==='rat-tech'?ASSETS.rat:current==='reading'?ASSETS.reading:current==='screen-free'?ASSETS.offline:ASSETS.hero}" alt="Chalote celebrando conquistas" width="720" height="960"><div><small>${current==='global'?'GTI MISSIONS':current.toUpperCase()}</small><b>${unlocked}/${items.length} conquistas</b>${progressBar(pct(unlocked,items.length),'Conquistas desbloqueadas')}</div></section>
       <section class="achievement-grid-v3">${items.map(badgeCard).join('')}</section>
@@ -239,7 +239,7 @@
       {kind:'offline',icon:'♧',name:'Sem Tela',xp:Number(s.screen_free_xp||0),joined:!!s.screen_free_joined,meta:`${s.screen_free_week_days||0}/${s.screen_free_week_target||4} dias offline`},
     ];
     app.innerHTML=shell(`<div class="total-screen">
-      ${screenHead('♜','Progresso Total','Juntos por um amanhã mais saudável.','app')}
+      ${screenHead('🔱','Progresso Total','Juntos por um amanhã mais saudável.','app')}
       <section class="level-shield"><span>NÍVEL ${level(total)}</span><b>${fmt(total)} XP</b><small>${fmt(next)} XP para o nível ${level(total)+1}</small>${progressBar(pct(xpInLevel,500),'Progresso total do nível')}</section>
       <section class="total-stat-row"><div><span>🔥</span><b>${s.activity_streak||0}</b><small>dias seguidos</small></div><div><span>⚔</span><b>${s.missions_completed||0}</b><small>missões</small></div><div><span>🏆</span><b>${s.badges||0}</b><small>conquistas</small></div></section>
       <section class="contribution-panel"><div class="compact-section-title"><h2>Contribuição por desafio</h2></div>${contributions.map(item=>item.joined?`<article><span class="contribution-symbol ${item.kind}">${item.icon}</span><div><b>${item.name}</b><small>${item.meta}</small>${progressBar(total?pct(item.xp,total):0,`Contribuição de ${item.name}`)}</div><em>${total?pct(item.xp,total):0}%</em></article>`:`<article class="not-joined"><span class="contribution-symbol ${item.kind}">${item.icon}</span><div><b>${item.name}</b><small>Você ainda não participa deste desafio.</small></div></article>`).join('')}</section>

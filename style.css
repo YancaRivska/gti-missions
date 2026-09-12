@@ -3560,10 +3560,10 @@ body {
 .welcome-logo { z-index:4; }
 .welcome-logo .gti-brand img { width:252px; }
 .welcome-logo p { margin:7px 0 0;color:#dffaff;font-size:9px;line-height:1.65;letter-spacing:.33em; }
-.welcome-chalote { z-index:3;min-height:470px;margin-top:-17px;align-items:center; }
-.welcome-chalote img { width:350px !important;max-width:none;max-height:62svh;object-fit:contain;filter:drop-shadow(0 19px 25px #000c) drop-shadow(0 0 20px rgb(244 42 226 / 26%)); }
+.welcome-chalote { z-index:3;min-height:415px;margin-top:-12px;align-items:center; }
+.welcome-chalote img { width:305px !important;max-width:none;max-height:52svh;object-fit:contain;filter:drop-shadow(0 19px 25px #000c) drop-shadow(0 0 20px rgb(244 42 226 / 26%)); }
 .welcome-halo { top:15%;width:320px;height:320px;border-color:rgb(56 229 255 / 25%);background:radial-gradient(circle,rgb(13 166 221 / 30%),transparent 68%); }
-.welcome-copy { z-index:5;margin-top:-35px; }
+.welcome-copy { z-index:5;margin-top:-28px; }
 .welcome-copy > p { margin-bottom:10px;font-family:Georgia,"Times New Roman",serif;font-size:11px;font-style:italic;font-weight:500;letter-spacing:.11em;text-transform:none; }
 .welcome-copy .aurora-button { min-height:51px;border-radius:13px;font-size:13px; }
 .welcome-copy small { margin-top:10px;color:#77cfe3;font-size:10px; }
@@ -3686,6 +3686,8 @@ body {
 .achievement-screen blockquote { margin-top:7px;padding:7px;font-size:9px; }
 
 .level-shield { width:220px;margin-top:6px;padding:17px 18px 14px; }
+.level-shield { position:relative;isolation:isolate;overflow:hidden;min-height:119px;border:0;background:linear-gradient(135deg,#31e4ff,#2081ff 55%,#ef36df);box-shadow:0 0 27px rgb(35 214 255 / 24%); }
+.level-shield::before { position:absolute;inset:2px;z-index:-1;clip-path:inherit;background:linear-gradient(160deg,#073156,#020c20 75%);content:""; }
 .level-shield b { margin:2px 0;font-size:25px; }
 .level-shield small { margin-bottom:7px;font-size:8px; }
 .total-stat-row { gap:6px;margin-top:7px; }
