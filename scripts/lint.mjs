@@ -7,6 +7,7 @@ for (const file of javascriptFiles) execFileSync(process.execPath, ['--check', f
 const trackedFiles = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
 const violations = [];
 for (const file of trackedFiles) {
+  if (file === 'scripts/lint.mjs') continue;
   if (!/\.(?:js|mjs|ts|html|json|md|sql)$/.test(file)) continue;
   const source = readFileSync(file, 'utf8');
   if (/\b(?:TODO|FIXME|HACK)\b/.test(source)) violations.push(`${file}: marcador temporário`);
