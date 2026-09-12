@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 160" role="img" aria-labelledby="title desc">
+  <title id="title">GTI Missions</title>
+  <desc id="desc">Logotipo luminoso do universo GTI Missions</desc>
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".42" stop-color="#e8fdff"/><stop offset=".72" stop-color="#55e9ff"/><stop offset="1" stop-color="#f43fe8"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#14dcff"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#ff43e4"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-80%" width="180%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/><feFlood flood-color="#1ddcff" flood-opacity=".7"/><feComposite in2="blur" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="pink" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="b"/><feFlood flood-color="#ff37df"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <g filter="url(#glow)">
+    <path d="M68 93c-28 0-45-16-45-42S41 9 70 9h68l-17 24H71c-13 0-20 6-20 18s8 18 21 18h30V59H77l14-22h40v56H68Z" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <path d="M133 9h131l-17 25h-38v59h-29V34h-63l16-25Z" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <path d="M273 9h31v84h-31z" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <path d="M326 13l7-10 7 10 14-5-7 20h-28L312 8l14 5Z" fill="#ff7bea" filter="url(#pink)"/>
+    <path d="M314 9h29" stroke="#fff" stroke-linecap="round"/>
+  </g>
+  <text x="211" y="137" text-anchor="middle" fill="#b9f7ff" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="800" letter-spacing="12">MISSIONS</text>
+  <path d="M63 149h296" stroke="url(#edge)" stroke-width="1" opacity=".45"/>
+</svg>

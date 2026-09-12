@@ -77,18 +77,15 @@
 
     app.innerHTML = shell(`
       <div class="water-game">
-        <header class="player-bar game-panel">
-          <div class="player-identity">${avatar}<div><small>EXPLORADOR(A)</small><b>${esc(p.display_name)}</b><span>NV. ${currentLevel} • ${levelName(totalXp)}</span></div></div>
-          <div class="player-resources"><span title="XP total">⚡ ${fmt(totalXp)}</span><span title="Ofensiva no GTI Missions">🔥 ${streak}</span></div>
-          <div class="player-level">${progressBar(levelPct, `Progresso do nível ${currentLevel}`)}<small>${fmt(totalXp % 500)} / 500 XP para o próximo nível</small></div>
+        <header class="aquaxp-screen-head">
+          <button class="screen-back" data-nav="challenges" aria-label="Voltar">‹</button>
+          <div><h1><span>💧</span> Desafio da Água</h1><p>Hidratação hoje. Mais conquistas amanhã.</p></div>
+          <button class="screen-alert" data-nav="profile" aria-label="Abrir perfil">${avatar}</button>
         </header>
 
-        <section class="water-titlebar water-hero-title">
-          <div><small>AQUAXP LEAGUE • JORNADA DA ÁGUA</small>
-          <h1>Desafio da Água</h1>
-          <p>Água hoje. Mais energia para conquistar amanhã.</p>
-          <button class="game-cta aurora compact" id="quickWaterRegister" type="button">Registrar água →</button></div>
-          <img src="/assets/challenges/aquaxp/chalote-aquaxp-v1.webp" alt="Chalote segurando sua garrafa no AquaXP League" width="720" height="960">
+        <section class="aquaxp-status-row">
+          <div><span>🔥</span><b>${streak}</b><small>dias seguidos</small></div>
+          <div><span>⚡</span><b>${fmt(totalXp)}</b><small>XP total</small></div>
         </section>
 
         <nav class="water-tabs" role="tablist" aria-label="Áreas do Desafio da Água">
@@ -101,10 +98,11 @@
           <section class="adventure-map" aria-label="Mapa da jornada semanal AquaXP">
             <div class="map-atmosphere"></div>
             <img class="map-chalote" src="/assets/challenges/aquaxp/chalote-aquaxp-v1.webp" alt="Chalote explorando o mapa AquaXP" width="720" height="960">
-            <div class="map-heading"><span>JORNADA DA SEMANA</span><b>${weekDays}/7 marcos</b></div>
+            <div class="map-heading"><span>AQUAXP LEAGUE • JORNADA DA SEMANA</span><b>${weekDays}/7 marcos</b></div>
             ${worlds.map(world => worldNode(world, weekDays)).join('')}
             <div class="map-legend"><span><i class="completed"></i>Concluído</span><span><i class="active"></i>Atual</span><span><i class="locked"></i>Bloqueado</span></div>
-            <button class="game-cta aurora" id="continueJourney" type="button">Registrar água</button>
+            <div class="map-daily-progress"><span>Meta diária</span><b>${fmt(today)} / ${fmt(target)} ml</b><em>${todayPct}%</em>${progressBar(todayPct,'Meta diária de hidratação')}</div>
+            <button class="game-cta aurora" id="continueJourney" type="button">Registrar água →</button>
           </section>
 
           <section class="today-voyage game-panel">
