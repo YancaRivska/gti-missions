@@ -7,6 +7,7 @@
     rat:'/assets/challenges/rat-tech/chalote-rat-tech-v1.webp',
     reading:'/assets/challenges/reading/chalote-reading-v1.webp',
     offline:'/assets/challenges/screen-free/chalote-screen-free-v1.webp',
+    scarlote:'/assets/mascot/scarlote-cyber-v1.webp',
   };
 
   const pct=(value,total)=>Math.min(100,Math.round((Number(value||0)/Math.max(1,Number(total||0)))*100));
@@ -222,7 +223,7 @@
     app.innerHTML=shell(`<div class="achievement-screen">
       ${screenHead('💎','Conquistas por Desafio','Cada hábito abre uma nova relíquia.','app')}
       <nav class="world-tabs achievement-tabs">${[['global','Total'],['aqua','Água'],['rat-tech','RAT Tech'],['reading','Leitura'],['screen-free','Sem Tela']].map(([id,label])=>`<button class="${current===id?'active':''}" data-achievement="${id}">${label}</button>`).join('')}</nav>
-      <section class="achievement-summary"><img src="${current==='aqua'?ASSETS.aqua:current==='rat-tech'?ASSETS.rat:current==='reading'?ASSETS.reading:current==='screen-free'?ASSETS.offline:ASSETS.hero}" alt="Chalote celebrando conquistas" width="720" height="960"><div><small>${current==='global'?'GTI MISSIONS':current.toUpperCase()}</small><b>${unlocked}/${items.length} conquistas</b>${progressBar(pct(unlocked,items.length),'Conquistas desbloqueadas')}</div></section>
+      <section class="achievement-summary"><div class="achievement-mascots ${current==='global'?'is-duo':''}"><img src="${current==='aqua'?ASSETS.aqua:current==='rat-tech'?ASSETS.rat:current==='reading'?ASSETS.reading:current==='screen-free'?ASSETS.offline:ASSETS.hero}" alt="Chalote celebrando conquistas" width="720" height="960">${current==='global'?`<img class="scarlote" src="${ASSETS.scarlote}" alt="Scarlote celebrando as conquistas globais" width="720" height="901">`:''}</div><div><small>${current==='global'?'GTI MISSIONS':current.toUpperCase()}</small><b>${unlocked}/${items.length} conquistas</b>${progressBar(pct(unlocked,items.length),'Conquistas desbloqueadas')}</div></section>
       <section class="achievement-grid-v3">${items.map(badgeCard).join('')}</section>
       <blockquote>“Cada passo conta. Você está evoluindo.”</blockquote>
     </div>`,'achievements');
@@ -271,7 +272,7 @@
       ${screenHead(icon,title,subtitle,'app')}
       <nav class="world-tabs ranking-world-tabs">${[['global','Geral'],['aqua','Água'],['rat-tech','RAT Tech'],['reading','Leitura'],['screen-free','Sem Tela']].map(([id,label])=>`<button class="${current===id?'active':''}" data-ranking-type="${id}">${label}</button>`).join('')}</nav>
       <nav class="period-tabs">${[['week','Esta semana'],['month','Este mês'],['all','Geral']].map(([id,label])=>`<button class="${range===id?'active':''}" data-ranking-period="${id}">${label}</button>`).join('')}</nav>
-      ${current==='global'?'<section class="ranking-explainer"><span>✦</span><p>O ranking geral soma o XP dos desafios em que cada pessoa participa. Ninguém perde posição por não entrar em um mundo.</p></section>':''}
+      ${current==='global'?`<section class="ranking-explainer has-scar"><span>✦</span><p>O ranking geral soma o XP dos desafios em que cada pessoa participa. Ninguém perde posição por não entrar em um mundo.</p><img src="${ASSETS.scarlote}" alt="Scarlote no ranking geral" width="720" height="901"></section>`:''}
       <div class="ranking-columns"><span>#</span><span>EXPLORADOR</span><span>${current==='global'?'XP':'PROGRESSO'}</span></div>
       <section class="ranking-list">${cards.length?cards.join(''):'<div class="empty">Ainda não há progresso neste ranking.</div>'}</section>
       <blockquote>${current==='aqua'?'“Cada gole conta.”':current==='rat-tech'?'“Movimento hoje. Energia amanhã.”':current==='reading'?'“Grandes leitores constroem grandes futuros.”':current==='screen-free'?'“Menos tela. Mais do que realmente importa.”':'“A evolução fica maior quando é coletiva.”'}</blockquote>
