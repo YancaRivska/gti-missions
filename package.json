@@ -1,6 +1,6 @@
 {
   "name": "gti-missions",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Aplicativo web da comunidade Galera do TI para miss\u00f5es, h\u00e1bitos, XP, selos e ranking mensal.",
   "main": "app.js",
   "scripts": {

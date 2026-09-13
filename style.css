@@ -3632,3 +3632,174 @@ body {
 }
 /* Product additions reuse the existing surfaces and controls. */
 .note-content{white-space:pre-wrap;overflow-wrap:anywhere}.journal-note>div{width:100%}.journal-note p{line-height:1.6}.achievement-dialog{color:#f4f8ff;background:#071c30;border:1px solid #515d91;border-radius:24px;padding:28px;width:min(92vw,420px);max-height:90dvh;overflow:auto;text-align:center}.achievement-dialog::backdrop{background:#020a18c9}.achievement-dialog button{margin-top:12px}.achievement-symbol{font-size:76px;margin:20px}.skeleton div{height:70px;border-radius:16px;background:#ffffff0c;margin:20px 0}.skeleton div:first-child{height:120px}.profile-actions{flex-wrap:wrap}.journal-note button,.world-tabs button{min-height:44px}.achievement-tile small{display:block}.achievement-grid-v3 .achievement-tile{content-visibility:auto;contain-intrinsic-size:auto 180px}
+
+/* Calm interface: one clear action per section, restrained decoration. */
+body {
+  background: linear-gradient(180deg,#020a16,#041426 70%,#020a16);
+}
+
+.mission-app-shell {
+  width: min(100%,520px);
+  padding: 0 14px 92px !important;
+  border: 0 !important;
+  background: #041323 !important;
+  box-shadow: none !important;
+}
+
+.welcome-clean {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 24px 18px;
+  background: linear-gradient(160deg,#03172c,#071d36 58%,#071327);
+}
+.welcome-clean::before,.welcome-clean::after { display: none; }
+.welcome-panel {
+  position: relative;
+  width: min(100%,430px);
+  min-height: 460px;
+  overflow: hidden;
+  border: 1px solid rgb(64 183 224 / 28%);
+  border-radius: 24px;
+  padding: 28px 22px;
+  background: #061a30;
+  box-shadow: 0 18px 45px rgb(0 0 0 / 24%);
+}
+.welcome-clean .welcome-logo { display: block;justify-items:start; }
+.welcome-clean .welcome-logo .gti-brand { justify-items:start;filter:none; }
+.welcome-clean .welcome-logo .gti-brand img { width: 138px; }
+.welcome-clean .welcome-copy { position: relative;z-index: 2;width: 72%;margin-top: 64px;text-align:left; }
+.welcome-clean .welcome-copy small { margin:0;color:#71d8ee;font-size:12px;font-weight:800;letter-spacing:.08em; }
+.welcome-clean .welcome-copy h1 { margin:9px 0;color:#fff;font-family:inherit;font-size:38px;line-height:1.03;letter-spacing:-.045em; }
+.welcome-clean .welcome-copy p { margin:0 0 22px;color:#b5c9d6;font-size:16px;line-height:1.5; }
+.welcome-clean .welcome-copy .primary { min-width:150px;min-height:48px;border-radius:13px; }
+.welcome-mascot { position:absolute;right:-34px;bottom:-28px;width:205px;height:auto;filter:drop-shadow(0 12px 18px rgb(0 0 0 / 40%)); }
+.welcome-links { display:flex;gap:22px;justify-content:center;margin-top:16px; }
+.welcome-links a { color:#87a8b8;font-size:14px; }
+
+.home-brandbar { padding:12px 0 6px; }
+.home-brandbar .icon-only,.avatar-button { border:0;background:transparent;box-shadow:none; }
+.avatar-button { display:grid;width:36px;height:36px;min-height:36px;padding:0;place-items:center; }
+.avatar-button .avatar { width:34px;height:34px;flex-basis:34px; }
+.home-greeting { align-items:center;margin:10px 2px 14px; }
+.home-greeting h1 { font-size:25px; }
+.home-greeting p { margin-top:4px;color:#8ba8b8;font-size:14px; }
+.today-card {
+  display:grid;
+  gap:8px;
+  border:1px solid #1b4d68;
+  border-radius:18px;
+  padding:16px;
+  background:#071d31;
+  box-shadow:none;
+}
+.today-heading { display:flex;align-items:center;justify-content:space-between;margin-bottom:3px; }
+.today-heading small,.next-badge-card small { color:#78cfe3;font-size:12px;font-weight:800;letter-spacing:.06em; }
+.today-heading h2 { margin:3px 0 0;font-size:20px; }
+.today-heading button,.compact-section-title button { min-height:36px;border:0;background:transparent;color:#78cfe3;font-size:14px; }
+.today-mission,.next-badge-card {
+  display:grid;
+  width:100%;
+  min-height:68px;
+  grid-template-columns:38px 1fr 24px;
+  gap:10px;
+  align-items:center;
+  border:1px solid #173e56;
+  border-radius:13px;
+  padding:11px;
+  background:#061728;
+  color:#fff;
+  text-align:left;
+  box-shadow:none;
+}
+.today-mission > span,.next-badge-card > span { font-size:24px;text-align:center; }
+.today-mission b,.next-badge-card b { display:block;font-size:15px; }
+.today-mission small { display:block;margin:3px 0 7px;color:#9bb3c0;font-size:13px; }
+.today-mission i,.next-badge-card i { color:#76ddf2;font-size:20px;font-style:normal;text-align:center; }
+.home-stat-row { gap:7px;margin-top:9px; }
+.home-stat-row > div { min-height:58px;padding:10px 4px;border-color:#173e56;background:#061728;box-shadow:none; }
+.home-stat-row b { display:block;margin:0;font-size:14px; }
+.home-stat-row small { margin-top:4px;font-size:11px; }
+.next-badge-card { margin-top:9px; }
+.compact-section-title { margin:17px 2px 8px; }
+.compact-section-title h2 { font-size:16px; }
+.active-world-grid { gap:7px; }
+.active-world { min-width:calc((100% - 14px)/3);min-height:78px;border-color:#173e56 !important;background:#061728 !important;box-shadow:none !important; }
+.active-world span { font-size:20px;filter:none; }
+.active-world b { font-size:12px; }
+.active-world small { font-size:10px; }
+.community-mini { border-color:#173e56;background:#061728;box-shadow:none; }
+
+.mission-screen-head p,.aquaxp-screen-head p { font-size:12px; }
+.mission-screen-head h1,.aquaxp-screen-head h1 { font-size:20px; }
+.world-visual {
+  height:190px;
+  margin:0;
+  border-color:#173e56;
+  border-radius:16px;
+  background:#071d31 !important;
+  box-shadow:none !important;
+}
+.world-visual::before,.world-visual-glow { display:none; }
+.world-visual img { right:0;left:auto;width:52%;height:100%;object-fit:contain;object-position:right bottom;opacity:.9;filter:none; }
+.hero-message,.offline-quote,.world-screen blockquote,.achievement-screen blockquote,.total-screen blockquote,.ranking-screen blockquote { display:none; }
+.world-visual-caption { right:46%;left:12px;border:0;padding:8px;background:transparent;text-align:left;box-shadow:none;backdrop-filter:none; }
+.world-stat-grid > div,.world-progress-card,.daily-missions,.world-form-card,.rule-card,.settings-card,.profile-challenges {
+  border-color:#173e56 !important;
+  background:#061728 !important;
+  box-shadow:none !important;
+}
+.world-stat-grid small,.daily-missions small { font-size:11px; }
+.world-stat-grid b,.daily-missions b { font-size:13px; }
+.world-primary-action { background:#1389b7;box-shadow:none;text-shadow:none; }
+
+.water-game { display:grid; }
+.aquaxp-status-row { order:1; }
+.water-check { order:2;margin-top:0 !important; }
+.water-tabs { order:3;margin-top:10px !important; }
+.water-tab-panel { order:4; }
+.water-check .quest-banner span { font-size:11px; }
+.water-check .quest-banner b { font-size:20px !important; }
+.water-presets { gap:7px !important; }
+.water-presets button { min-height:64px;border-radius:12px;box-shadow:none !important; }
+.adventure-map { min-height:285px !important;border-color:#173e56 !important;box-shadow:none !important; }
+.map-chalote,.map-atmosphere,.map-legend { display:none !important; }
+.today-voyage,.guardian-card { display:none; }
+.world-node { transform:scale(.58) !important; }
+
+.challenge-select-grid { grid-template-columns:1fr 1fr;gap:8px; }
+.universe-tile { min-height:178px;border-color:#173e56 !important;border-radius:14px;box-shadow:none !important; }
+.universe-tile img { right:-15%;left:auto;width:75%;height:78%;object-fit:contain;transform:none;opacity:.78; }
+.universe-tile-shade { background:linear-gradient(180deg,transparent 15%,#061427 88%); }
+.universe-tile-copy p { display:none; }
+.universe-tile-copy h2 { font-size:15px; }
+.universe-tile-copy small,.universe-tile-copy span { font-size:10px; }
+
+.achievement-summary,.achievement-hex,.achievement-tile,.ranking-list,.profile-head,.player-profile-head,.mission-link-list article {
+  border-color:#173e56 !important;
+  background:#061728 !important;
+  box-shadow:none !important;
+}
+.achievement-dialog { border-radius:18px;box-shadow:none; }
+.achievement-symbol { margin:12px;font-size:56px; }
+.achievement-grid-v3 { grid-template-columns:1fr 1fr; }
+.achievement-hex { min-height:100px; }
+.player-profile-head { min-height:155px;padding:20px 32% 18px 17px; }
+.profile-chalote { right:-5%;bottom:-22%;width:37%;filter:none; }
+.league-hero { min-height:145px;padding:20px 32% 18px 17px;box-shadow:none; }
+.league-hero img { right:-2%;bottom:-35%;width:35%;filter:none; }
+.fitness-hero { min-height:190px;padding:20px 38% 18px 17px;box-shadow:none; }
+.fitness-hero-art img { right:-3%;bottom:-8%;width:41%;filter:none; }
+
+.bottom-nav { border-color:#173e56;background:rgb(3 15 27 / 96%);box-shadow:none;backdrop-filter:blur(10px); }
+.bottom-nav a { opacity:.62; }
+.bottom-nav a.active { opacity:1;background:transparent;box-shadow:none; }
+
+@media (max-width:380px) {
+  .welcome-clean .welcome-copy { width:78%; }
+  .welcome-clean .welcome-copy h1 { font-size:32px; }
+  .welcome-mascot { right:-48px;width:175px; }
+  .today-card { padding:13px; }
+  .challenge-select-grid { grid-template-columns:1fr; }
+  .universe-tile { min-height:145px; }
+}

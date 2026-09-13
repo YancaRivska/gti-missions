@@ -36,14 +36,18 @@
 
   async function renderHome(){
     const user=await authUser();
-    app.innerHTML=`<main class="welcome-screen">
-      <div class="welcome-atmosphere"></div>
-      <section class="welcome-logo">${brandLogo()}<p>PEQUENAS AÇÕES.<br><b>GRANDES EVOLUÇÕES.</b></p></section>
-      <section class="welcome-chalote"><div class="welcome-halo"></div><img src="${ASSETS.hero}" alt="Chalote, mascote oficial do GTI Missions" width="720" height="960"></section>
-      <div class="welcome-copy"><p>Explore sua melhor versão.</p><button class="primary aurora-button" id="startMission">${user?'Continuar minha jornada →':'Começar agora →'}</button><small>Um futuro melhor começa com você.</small></div>
+    app.innerHTML=`<main class="welcome-screen welcome-clean">
+      <section class="welcome-panel">
+        <div class="welcome-logo">${brandLogo()}</div>
+        <div class="welcome-copy"><small>MISSÕES DIÁRIAS • PROGRESSO REAL</small><h1>Um passo por dia.</h1><p>Água, treino e hábitos em um só lugar.</p><button class="primary" id="startMission">${user?'Continuar':'Começar agora'}</button></div>
+        <img class="welcome-mascot" src="${ASSETS.hero}" alt="Chalote, mascote oficial do GTI Missions" width="720" height="960">
+      </section>
+      <nav class="welcome-links"><a href="/?view=terms" data-nav="terms">Termos</a><a href="/?view=privacy" data-nav="privacy">Privacidade</a></nav>
     </main>`;
     document.getElementById('startMission').onclick=()=>nav(user?'app':'login');
+    bindNav();
     installSupport();
+    return true;
   }
 
   async function renderDashboard(player){
@@ -51,34 +55,24 @@
       stats(),customStatuses(),rpc('gti_missions_current_season'),isAdmin()
     ]);
     const worlds=firstParty(statuses),avatar=await avatarHtml(player.p.avatar_path,player.p.display_name,'small');
-    const userRank=s.monthly_rank||'—';
-    const xpInLevel=Number(s.total_xp||0)%500,xpPct=pct(xpInLevel,500);
-    const activeCount=2+Number(!!worlds.reading?.joined)+Number(!!worlds.offline?.joined);
-    const weeklyParts=[pct(s.water_week_days,7),pct(s.exercise_week_days,s.exercise_week_target)];
-    if(worlds.reading?.joined)weeklyParts.push(pct(worlds.reading.week_completed_days,worlds.reading.weekly_target_days));
-    if(worlds.offline?.joined)weeklyParts.push(pct(worlds.offline.week_completed_days,worlds.offline.weekly_target_days));
-    const overall=Math.round(weeklyParts.reduce((a,b)=>a+b,0)/Math.max(1,weeklyParts.length));
+    const waterPct=pct(s.water_today_ml,s.water_target_ml);
     app.innerHTML=shell(`<div class="reference-home">
-      <header class="home-brandbar"><button class="icon-only" data-nav="challenges" aria-label="Abrir desafios">☰</button>${brandLogo(true)}<button class="icon-only" aria-label="Notificações">♢</button></header>
-      <button class="secondary full" data-nav="seasons">${esc(season.name)}${season.requires_code&&!season.joined?' • Inserir código':''}</button><section class="home-greeting"><div><h1>Olá, ${esc(player.p.display_name.split(' ')[0])}!</h1><p>Disciplina hoje, um amanhã extraordinário.</p></div>${admin?'<button class="admin-chip" id="adminBtn">ADM</button>':''}</section>
-      <section class="compact-player-card">
-        <div class="player-avatar-wrap">${avatar}<span>${level(s.total_xp)}</span></div>
-        <div><small>NÍVEL ${level(s.total_xp)} • ${levelName(s.total_xp)}</small><b>${fmt(s.total_xp)} / ${fmt((Math.floor(Number(s.total_xp||0)/500)+1)*500)} XP</b>${progressBar(xpPct,'Progresso do nível')}</div>
-        <button data-nav="profile" aria-label="Abrir perfil">›</button>
+      <header class="home-brandbar"><button class="icon-only" data-nav="challenges" aria-label="Abrir desafios">☰</button>${brandLogo(true)}<button class="avatar-button" data-nav="profile" aria-label="Abrir perfil">${avatar}</button></header>
+      <section class="home-greeting"><div><h1>Olá, ${esc(player.p.display_name.split(' ')[0])}</h1><p>${esc(season.name)}</p></div>${admin?'<button class="admin-chip" id="adminBtn">ADM</button>':''}</section>
+      <section class="today-card">
+        <div class="today-heading"><div><small>MISSÕES DE HOJE</small><h2>Seu próximo passo</h2></div><button data-nav="seasons">${season.requires_code&&!season.joined?'Inserir código':'Temporada'}</button></div>
+        <button class="today-mission" data-nav="aqua"><span>💧</span><div><b>Água</b><small>${fmt(s.water_today_ml)} / ${fmt(s.water_target_ml)} ml</small>${progressBar(waterPct,'Meta diária de água')}</div><i>${waterPct>=100?'✓':'+'}</i></button>
+        <button class="today-mission" data-nav="tech"><span>🏋️</span><div><b>Treino</b><small>${s.exercise_today_completed?'Concluído hoje':`${s.exercise_week_days||0}/${s.exercise_week_target||3} nesta semana`}</small></div><i>${s.exercise_today_completed?'✓':'+'}</i></button>
       </section>
-      <div class="compact-section-title"><h2>Meus desafios ativos</h2><button data-nav="challenges">Ver todos</button></div>
+      <section class="home-stat-row"><div><b>🔥 ${s.activity_streak||0}</b><small>dias seguidos</small></div><div><b>${fmt(s.monthly_xp)} XP</b><small>nesta temporada</small></div><div><b>Nível ${level(s.total_xp)}</b><small>${levelName(s.total_xp)}</small></div></section>
+      <button class="next-badge-card" data-nav="collection"><span>✦</span><div><small>PRÓXIMO EMBLEMA</small><b>${s.next_badge?esc(s.next_badge):'Ver minha coleção'}</b></div><i>›</i></button>
+      <div class="compact-section-title"><h2>Outras missões</h2><button data-nav="challenges">Ver todas</button></div>
       <section class="active-world-grid">
         <button class="active-world aqua" data-nav="aqua"><span>💧</span><b>Água</b><small>${s.water_week_days} dia${Number(s.water_week_days)===1?'':'s'}</small></button>
         <button class="active-world rat" data-nav="tech"><span>⚡</span><b>RAT Tech</b><small>${s.exercise_week_days} treino${Number(s.exercise_week_days)===1?'':'s'}</small></button>
         <button class="active-world reading" data-nav="reading"><span>▣</span><b>Leitura</b><small>${worlds.reading?.joined?`${worlds.reading.week_completed_days} dias`:'Começar'}</small></button>
         <button class="active-world offline" data-nav="offline"><span>♧</span><b>Sem Tela</b><small>${worlds.offline?.joined?`${worlds.offline.week_completed_days} dias`:'Começar'}</small></button>
       </section>
-      <button class="overall-card" data-nav="progress">
-        <div class="overall-ring" style="--overall:${overall*3.6}deg"><span>${overall}%</span></div>
-        <div><small>PROGRESSO GERAL</small><b>Suas missões desta semana</b><p>${activeCount} mundos ativos • ofensiva de ${s.activity_streak||0} dias</p></div><i>›</i>
-      </button>
-      <section class="home-stat-row"><div><span>🔥</span><b>${s.activity_streak||0}</b><small>dias seguidos</small></div><div><span>♛</span><b>#${userRank}</b><small>ranking</small></div><div><span>✦</span><b>${s.badges||0}</b><small>conquistas</small></div></section>
-      <section class="rule-card"><b>Hoje</b><p>Água: ${fmt(s.water_today_ml)} / ${fmt(s.water_target_ml)} ml • ${s.exercise_today_completed?'Treino concluído':'Treino pendente'}</p><p>${fmt(s.monthly_xp)} XP nesta temporada</p><button class="secondary" data-nav="collection">${s.next_badge?'Próximo emblema: '+esc(s.next_badge):'Minha coleção'}</button></section><button class="primary aurora-button full journey-button" data-nav="challenges">Continuar minha jornada →</button>
       ${community(statuses).length?`<section class="community-mini"><small>MISSÕES DA COMUNIDADE</small>${community(statuses).slice(0,2).map(c=>`<button data-challenge="${c.id}"><span>${esc(c.icon)}</span><div><b>${esc(c.title)}</b><small>${c.joined?`${c.week_completed_days}/${c.weekly_target_days} nesta semana`:'Nova missão disponível'}</small></div><i>›</i></button>`).join('')}</section>`:''}
     </div>`,'app');
     bindNav();
@@ -114,7 +108,7 @@
       <section class="world-progress-card"><div><small>META DA SEMANA</small><b>${s.exercise_week_days||0} de ${s.exercise_week_target||3} dias de treino</b></div><span>${weekPct}%</span>${progressBar(weekPct,'Meta semanal de treino')}</section>
       <section class="mission-link-list daily-missions"><small>MISSÕES DE TREINO</small><article><span>⚔</span><div><b>Complete o treino de hoje</b><small>5–19 min: +15 XP • 20+ min: +30 XP</small></div><i>${s.exercise_week_days? '✓':'+'}</i></article><article><span>🏅</span><div><b>Conquiste a semana</b><small>Treine ${s.exercise_week_target||3} dias e ganhe +100 XP</small></div><i>${s.exercise_week_days>=s.exercise_week_target?'✓':'›'}</i></article></section>
       <button class="primary aurora-button full world-primary-action" id="openRatRegister" type="button">Registrar meu treino →</button>
-      <section class="world-form-card register-sheet" id="ratRegister" hidden><div class="form-card-title"><span>📸</span><div><small>TREINO DE HOJE</small><h2>Registrar treino</h2></div></div><form id="ratForm"><label>Atividade<select id="ratActivity"><option>Academia</option><option>Corrida</option><option>Caminhada</option><option>Ciclismo</option><option>Alongamento</option><option>Funcional</option><option>Esporte</option><option>Outro treino</option></select></label><label>Duração (minutos)<input id="ratMinutes" type="number" min="5" max="300" value="30" inputmode="numeric" required></label><button class="primary aurora-button full">Concluir treino de hoje</button></form><div id="ratMsg" aria-live="polite"></div></section>
+      <section class="world-form-card register-sheet" id="ratRegister" hidden><div class="form-card-title"><span>🏋️</span><div><small>TREINO DE HOJE</small><h2>Registrar treino</h2></div></div><form id="ratForm"><label>Atividade<select id="ratActivity"><option>Academia</option><option>Corrida</option><option>Caminhada</option><option>Ciclismo</option><option>Alongamento</option><option>Funcional</option><option>Esporte</option><option>Outro treino</option></select></label><label>Duração (minutos)<input id="ratMinutes" type="number" min="5" max="300" value="30" inputmode="numeric" required></label><button class="primary aurora-button full">Concluir treino de hoje</button></form><div id="ratMsg" aria-live="polite"></div></section>
     </div>`,'tech');
     bindNav();
     const ratRegister=document.getElementById('ratRegister');
