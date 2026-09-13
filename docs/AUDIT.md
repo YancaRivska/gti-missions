@@ -20,7 +20,7 @@ Base auditada: `YancaRivska/gti-missions`, `main` em `e262794`. O design não fo
 | P1 | corrigido no Git | erro interno desconhecido era mostrado ao usuário | fallback genérico testado |
 | P1 | painel pendente | proteção contra senhas vazadas desabilitada | habilitar no Supabase Auth |
 | P2 | corrigido no Git | cinco policies reavaliavam Auth por linha | migration otimizada |
-| P2 | corrigido no Git | não havia lint, testes, typecheck, build ou CI | controles e workflow adicionados |
+| P2 | corrigido no Git | não havia lint, testes, verificação de sintaxe, build ou CI | controles e workflow adicionados |
 | P2 | corrigido no Git | configuração/regras puras misturadas à UI | extração mínima e testada |
 | P2 | documentado | `app.js` ainda reúne transporte, sessão e orquestração | reduzir incrementalmente sem reescrita |
 | P3 | observado | índices recentes aparecem como não usados | não remover com amostra de apenas dois usuários |

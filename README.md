@@ -26,7 +26,7 @@ Use uma origem HTTP. Câmera, autenticação e Service Worker não funcionam cor
 
 ```bash
 npm run lint
-npm run typecheck
+npm run check:syntax
 npm test
 npm run build
 npm run check
