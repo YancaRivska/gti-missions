@@ -5283,3 +5283,27 @@ p {
 
 
 .player-metrics:has(>div:nth-child(4)) { grid-template-columns:repeat(4,minmax(0,1fr)); }
+
+/* Community landing, member identity and optional daily activity receipts. */
+.welcome-community { align-content:center;gap:20px; }
+.welcome-community .welcome-panel { min-height:640px;padding-bottom:280px;background:radial-gradient(ellipse at 50% 85%,#24417b66,transparent 60%),#061328; }
+.welcome-community .welcome-copy { width:100%;margin-top:28px; }
+.welcome-community .welcome-copy p { font-family:inherit;font-style:normal; }
+.welcome-community .welcome-copy .primary { width:100%; }
+.welcome-community .duo-art { position:absolute;bottom:-14px;left:5%;width:90%;height:270px;pointer-events:none; }
+.welcome-community .duo-art img { height:100%;width:55%;object-fit:contain; }
+.welcome-community .promo-banner { width:min(100%,430px);margin:0; }
+.welcome-community .welcome-links { margin:0; }
+.member-hero { display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center; }
+.member-hero h2,.member-hero p { margin:4px 0; }
+.member-message,.member-hero>strong { grid-column:1/-1;overflow-wrap:anywhere; }
+.member-hero>strong { color:#84e6ff; }
+.ranking-row,.league-list article { position:relative; }
+.ranking-row .link-btn::after,.league-list .link-btn::after { content:"";position:absolute;inset:0; }
+.ranking-row:focus-within,.league-list article:focus-within { outline:2px solid #78eaff;outline-offset:2px; }
+.activity-receipt { position:relative;margin:12px auto 20px;padding:18px;max-width:680px;border:1px solid #2f7790;border-radius:16px;background:#092232; }
+.activity-receipt small { display:block;color:#91e6f9;font-size:10px;letter-spacing:.08em;margin-bottom:8px; }
+.activity-receipt b { display:block;padding-right:24px; }
+.activity-receipt p { overflow-wrap:anywhere;color:#c4d2e4;font-size:14px; }
+.activity-receipt .secondary { min-height:44px;width:100%; }
+.receipt-close { position:absolute;top:6px;right:6px;width:44px;height:44px;background:transparent;color:#c4d2e4;font-size:24px;border:0; }

@@ -42,12 +42,13 @@
 
   async function renderHome(){
     const user=await authUser();
-    app.innerHTML=`<main class="welcome-screen welcome-clean">
+    app.innerHTML=`<main class="welcome-screen welcome-clean welcome-community">
       <section class="welcome-panel">
         <div class="welcome-logo">${brandLogo()}</div>
         <div class="welcome-copy"><small>MISSÕES DIÁRIAS • PROGRESSO REAL</small><h1>Um passo por dia.</h1><p>Água, treino e hábitos em um só lugar.</p><button class="primary" id="startMission">${user?'Continuar':'Começar agora'}</button></div>
-        <img class="welcome-mascot" src="${ASSETS.hero}" alt="Chalote, mascote oficial do GTI Missions" width="720" height="960">
+        ${duoArtwork()}
       </section>
+      ${promoBanner()}
       <nav class="welcome-links"><a href="/?view=terms" data-nav="terms">Termos</a><a href="/?view=privacy" data-nav="privacy">Privacidade</a></nav>
     </main>`;
     document.getElementById('startMission').onclick=()=>nav(user?'app':'login');
@@ -128,8 +129,8 @@
       event.preventDefault();
       if(!confirm('Concluir o treino de hoje? Essa confirmação registra sua atividade.'))return;
       const msg=document.getElementById('ratMsg'),button=event.submitter||form.querySelector('button');
-      try{button.disabled=true;const result=await rpc('gti_missions_submit_exercise',{p_exercise_name:document.getElementById('ratActivity').value,p_duration_minutes:+document.getElementById('ratMinutes').value});msg.textContent=result.already_completed?'Seu treino de hoje já está concluído.':`Treino concluído! +${result.xp_awarded||0} XP`;
-      await (await import('/product.js?v=5')).showAchievements(result.unlocked_badges,await profile());await renderTech();
+      try{button.disabled=true;const detail=`Hoje treinei: ${document.getElementById('ratActivity').value} · ${document.getElementById('ratMinutes').value} minutos.`;const result=await rpc('gti_missions_submit_exercise',{p_exercise_name:document.getElementById('ratActivity').value,p_duration_minutes:+document.getElementById('ratMinutes').value});msg.textContent=result.already_completed?'Seu treino de hoje já está concluído.':`Treino concluído! +${result.xp_awarded||0} XP`;
+      await (await import('/product.js?v=5.2.0')).showAchievements(result.unlocked_badges,await profile());await renderTech();if(!result.already_completed)(await import('/product.js?v=5.2.0')).showActivity({title:"RAT Tech",detail,icon:"⚡",xp:result.xp_awarded},await profile());
       }catch(error){button.disabled=false;msg.textContent=friendly(error);}
     };
 
@@ -159,7 +160,7 @@
     bindNav();
     const readingRegister=document.getElementById('readingRegister');
     document.getElementById('openReadingRegister').onclick=()=>{readingRegister.hidden=false;readingRegister.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})};
-    document.getElementById('readingForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('readingMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_submit_custom',{p_challenge_id:challenge.id,p_value:+document.getElementById('readPages').value,p_note:document.getElementById('bookTitle').value.trim(),p_request_id:crypto.randomUUID()});msg.innerHTML=`<div class="success">Leitura registrada${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 📖</div>`;setTimeout(()=>renderReading(player),500)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
+    document.getElementById('readingForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('readingMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_submit_custom',{p_challenge_id:challenge.id,p_value:+document.getElementById('readPages').value,p_note:document.getElementById('bookTitle').value.trim(),p_request_id:crypto.randomUUID()});msg.innerHTML=`<div class="success">Leitura registrada${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 📖</div>`;const detail=`Hoje li ${document.getElementById('readPages').value} páginas · ${document.getElementById('bookTitle').value.trim()}`;await renderReading(player);(await import('/product.js?v=5.2.0')).showActivity({title:'Desafio da Leitura',detail,icon:'📖',xp:result.xp_awarded},player.p)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
   }
 
   async function renderOffline(player){
@@ -180,7 +181,7 @@
     bindNav();
     const offlineRegister=document.getElementById('offlineRegister');
     document.getElementById('openOfflineRegister').onclick=()=>{offlineRegister.hidden=false;offlineRegister.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})};
-    document.getElementById('offlineForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('offlineMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_submit_custom',{p_challenge_id:challenge.id,p_value:+document.getElementById('offlineMinutes').value,p_note:document.getElementById('offlineActivity').value,p_request_id:crypto.randomUUID()});msg.innerHTML=`<div class="success">Momento offline registrado${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 🌿</div>`;setTimeout(()=>renderOffline(player),500)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
+    document.getElementById('offlineForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('offlineMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_submit_custom',{p_challenge_id:challenge.id,p_value:+document.getElementById('offlineMinutes').value,p_note:document.getElementById('offlineActivity').value,p_request_id:crypto.randomUUID()});msg.innerHTML=`<div class="success">Momento offline registrado${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 🌿</div>`;const detail=`Hoje passei ${document.getElementById('offlineMinutes').value} minutos sem tela · ${document.getElementById('offlineActivity').value}`;await renderOffline(player);(await import('/product.js?v=5.2.0')).showActivity({title:'Desafio Sem Tela',detail,icon:'🌿',xp:result.xp_awarded},player.p)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
   }
 
   function badgeCard(item){return `<article class="achievement-hex ${item.unlocked?'unlocked':'locked'} ${item.rare?'rare':''}"><div class="hex-icon"><span>${item.unlocked?item.icon:'▣'}</span></div><b>${esc(item.title)}</b><small>${esc(item.description)}</small>${item.unlocked?'<i>✓</i>':'<i>⌁</i>'}</article>`}
@@ -273,9 +274,10 @@
     const validTypes=['global','aqua','rat-tech','reading','screen-free'],validPeriods=['week','month','all'];
     const current=validTypes.includes(type)?type:'global',range=validPeriods.includes(period)?period:'month';
     const rows=await rpc('gti_missions_ranking_page',{p_challenge:current,p_period:range,p_offset:0});
+    const avatars=await Promise.all((rows||[]).map(row=>avatarHtml(row.avatar_path,row.display_name,'small')));
     const cards=[];
     for(const row of rows||[]){
-      const avatar=avatarFallback(row.display_name,'small'),medal=Number(row.rank)===1?'♛':Number(row.rank)===2?'♜':Number(row.rank)===3?'♝':row.rank;
+      const avatar=avatars[cards.length],medal=Number(row.rank)===1?'♛':Number(row.rank)===2?'♜':Number(row.rank)===3?'♝':row.rank;
       cards.push(`<article class="ranking-row rank-${Number(row.rank)} ${row.username===player.p.username?'me':''}"><strong>${medal}</strong><div class="ranking-user">${avatar}<div><button class="link-btn" data-member="${esc(row.username)}">${esc(row.display_name)}</button><small>@${esc(row.username)}${current==='global'?` • ${row.participating_challenges} mundo${Number(row.participating_challenges)===1?'':'s'}`:''}</small></div></div><span>${rankingScore(row,current)}${current!=='global'&&row.xp?`<small>${fmt(row.xp)} XP</small>`:''}</span></article>`);
     }
     const titles={global:['🏆','Ranking Geral','Todos os exploradores. Um futuro maior.'],aqua:['💧','Ranking da Água','Juntos por um amanhã mais saudável.'],'rat-tech':['⚡','Ranking RAT Tech','Mais movimento. Mais energia.'],reading:['▣','Ranking da Leitura','Mais livros. Mais horizontes.'],'screen-free':['♧','Ranking Sem Tela','Mais vida real. Mais bem-estar.']};

@@ -50,7 +50,7 @@ async function renderMembers(view){
 async function renderMember(username){
  const p=await rpc('gti_missions_member',{p_username:username||''});
  if(!p){page('Perfil indisponível','<p>Este perfil é privado ou não foi encontrado.</p>'+buttons);return;}
- page(p.display_name,`<section class="profile-head">${await avatarHtml(p.avatar_path,p.display_name)}<p>@${esc(p.username)}</p><p>${esc(p.tagline)}</p><b>Nível ${p.level} • ${fmt(p.total_xp)} XP</b>${p.streak!==undefined?`<p>🔥 ${p.streak} dias de ofensiva</p>`:''}</section>${p.challenges?`<section class="rule-card">${p.challenges.map(c=>`<p>${esc(c.name)} • ${c.days} dias neste mês</p>`).join('')}</section>`:''}${p.badges?`<h2>Emblemas recentes</h2><section class="badges">${p.badges.map(b=>`<article><span>${esc(b.icon)}</span><b>${esc(b.name)}</b></article>`).join('')}</section><button class="secondary" id="memberCollection">Ver coleção</button>`:''}${p.notes?`<h2>Notas públicas</h2><button class="secondary" id="allPublicNotes">Ver todas as notas</button>${p.notes.map(n=>`<article class="rule-card"><h3>${esc(n.title||'Nota')}</h3><p class="note-content">${esc(n.content)}</p></article>`).join('')||'<p>Nenhuma nota pública.</p>'}`:''}${p.show_history?'<button class="secondary" id="memberHistory">Ver histórico</button>':''}${buttons}`);
+ page(p.display_name,`<section class="member-hero game-panel">${await avatarHtml(p.avatar_path,p.display_name)}<div><small>EXPLORADOR GTI</small><h2>${esc(p.display_name)}</h2><p>@${esc(p.username)}</p></div><p class="member-message">${esc(p.tagline||'Cada ação real constrói um futuro maior.')}</p><strong>Nível ${p.level} · ${fmt(p.total_xp)} XP</strong></section>${p.challenges?`<section class="game-panel"><h2>Mundos ativos</h2><div class="profile-challenge-grid">${p.challenges.map(c=>`<article class="active"><b>${esc(c.name)}</b>${c.days!==undefined?`<small>${fmt(c.days)} dias neste mês</small>`:''}</article>`).join('')||'<p>Nenhum desafio ativo.</p>'}</div></section>`:'<p>Este participante mantém o progresso privado.</p>'}<nav class="profile-actions" aria-label="Mais sobre este participante">${p.badges?'<button class="secondary" id="memberCollection">Selos</button>':''}${p.notes?'<button class="secondary" id="allPublicNotes">Notas públicas</button>':''}${p.show_history?'<button class="secondary" id="memberHistory">Temporadas</button>':''}</nav>${buttons}`);
  if(p.notes)document.getElementById('allPublicNotes').onclick=()=>nav('public-notes',false,{username:p.username});
  if(p.badges)document.getElementById('memberCollection').onclick=()=>nav('collection',false,{username:p.username});
  if(p.show_history)document.getElementById('memberHistory').onclick=()=>nav('seasons',false,{username:p.username});
@@ -80,7 +80,7 @@ export async function showAchievements(badges,player){
 }
 function shareDialog(badge,player){
  const modal=document.createElement('dialog');modal.className='achievement-dialog';modal.innerHTML='<h2>Compartilhar conquista</h2><p>Escolha o formato da imagem.</p><button class="primary full" data-size="1920">Story • 1080 × 1920</button><button class="secondary full" data-size="1350">Feed • 1080 × 1350</button><p role="status"></p><form method="dialog"><button class="secondary full">Fechar</button></form>';document.body.append(modal);modal.onclose=()=>modal.remove();modal.showModal();
- modal.querySelectorAll('[data-size]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const season=await rpc('gti_missions_current_season');const {shareAchievement}=await import('/share-achievement.js?v=5');await shareAchievement(badge,player,season.name,Number(b.dataset.size));modal.querySelector('[role=status]').textContent='Imagem pronta. Se o compartilhamento não abriu, ela foi baixada.';}catch(e){if(e.name!=='AbortError')modal.querySelector('[role=status]').textContent='Não foi possível gerar a imagem. Tente novamente.';}finally{b.disabled=false;}});
+ modal.querySelectorAll('[data-size]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const season=await rpc('gti_missions_current_season');const {shareAchievement}=await import('/share-achievement.js?v=5.2.0');await shareAchievement(badge,player,season.name,Number(b.dataset.size));modal.querySelector('[role=status]').textContent='Imagem pronta. Se o compartilhamento não abriu, ela foi baixada.';}catch(e){if(e.name!=='AbortError')modal.querySelector('[role=status]').textContent='Não foi possível gerar a imagem. Tente novamente.';}finally{b.disabled=false;}});
 }
 
 async function renderPublicNotes(username){
@@ -88,4 +88,20 @@ async function renderPublicNotes(username){
  let before=null,beforeId=null;const more=document.getElementById('morePublicNotes');
  async function load(){more.disabled=true;try{const rows=await rpc('gti_missions_public_notes',{p_username:username,p_before:before,p_before_id:beforeId});document.getElementById('publicNoteList').insertAdjacentHTML('beforeend',rows.map(n=>`<article class="rule-card"><h2>${esc(n.title||'Nota')}</h2><small>${date(n.created_at)}</small><p class="note-content">${esc(n.content)}</p></article>`).join(''));before=rows.at(-1)?.created_at||before;beforeId=rows.at(-1)?.id||beforeId;more.hidden=rows.length<10;if(!before)document.getElementById('publicNoteMsg').textContent='Nenhuma nota pública disponível.';}catch(error){notice(document.getElementById('publicNoteMsg'),error);}finally{more.disabled=false;}}
  more.onclick=load;await load();
+}
+
+// Receipts are built only after a successful submission, and stay in memory only.
+export function showActivity(activity,player){
+ document.querySelector('.activity-receipt')?.remove();
+ const receipt=document.createElement('section');receipt.className='activity-receipt';receipt.setAttribute('aria-label','Atividade registrada');
+ const data={...activity,date:new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})};
+ receipt.innerHTML=`<div><small>MISSÃO DO DIA REGISTRADA</small><b>${esc(data.title)} · +${fmt(data.xp||0)} XP</b><p>${esc(data.detail)}</p></div><button class="secondary" data-share-activity>Compartilhar imagem ↗</button><button class="receipt-close" aria-label="Dispensar comprovante">×</button>`;
+ (app.querySelector('.app-content')||app.querySelector('main')||app).prepend(receipt);
+ receipt.querySelector('.receipt-close').onclick=()=>receipt.remove();
+ receipt.querySelector('[data-share-activity]').onclick=()=>{
+  const modal=document.createElement('dialog');modal.className='achievement-dialog';modal.setAttribute('aria-label','Compartilhar atividade');
+  modal.innerHTML=`<h2>Sua missão merece ser compartilhada.</h2><p>${esc(data.detail)}</p><p>O card inclui seu @, o registro e o XP. Compartilhe apenas o que quiser tornar público.</p><button class="primary full" data-size="1920">Story • 1080 × 1920</button><button class="secondary full" data-size="1350">Feed • 1080 × 1350</button><p role="status"></p><form method="dialog"><button class="secondary full">Fechar</button></form>`;
+  document.body.append(modal);modal.onclose=()=>modal.remove();modal.showModal();
+  modal.querySelectorAll('[data-size]').forEach(b=>b.onclick=async()=>{const controls=modal.querySelectorAll('[data-size]');controls.forEach(c=>c.disabled=true);try{const {shareActivity}=await import('/share-achievement.js?v=5.2.0');await shareActivity(data,player,Number(b.dataset.size));modal.querySelector('[role=status]').textContent='Imagem pronta para compartilhar ou baixar.';}catch(error){if(error.name!=='AbortError')modal.querySelector('[role=status]').textContent='Não foi possível gerar a imagem. Tente novamente.';}finally{controls.forEach(c=>c.disabled=false);}});
+ };
 }
