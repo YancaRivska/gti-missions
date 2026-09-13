@@ -1,0 +1,16 @@
+{
+  "name": "gti-missions",
+  "version": "4.0.1",
+  "private": true,
+  "description": "Plataforma gamificada de desafios da comunidade Galera do TI.",
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "check:syntax": "node --check app.js && node --check config.js && node --check core/domain.js && node --check universe-ui.js && node --check water-game.js && node --check sw.js",
+    "test": "node --test",
+    "build": "node scripts/build.mjs",
+    "check": "npm run lint && npm run check:syntax && npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

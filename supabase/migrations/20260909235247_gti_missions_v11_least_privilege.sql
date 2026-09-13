@@ -1,0 +1,10 @@
+revoke all on public.gti_missions_admins from authenticated;
+grant select on public.gti_missions_admins to authenticated;
+revoke all on public.gti_missions_challenges from authenticated;
+grant select on public.gti_missions_challenges to authenticated;
+revoke all on public.gti_missions_challenge_participants from authenticated;
+grant select on public.gti_missions_challenge_participants to authenticated;
+revoke all on public.gti_missions_challenge_entries from authenticated;
+grant select on public.gti_missions_challenge_entries to authenticated;
+revoke all on public.gti_missions_challenge_badges from authenticated;
+grant select on public.gti_missions_challenge_badges to authenticated;

@@ -1,17 +1,27 @@
-const SB_URL='https://nfuzjklrluhninqybfhx.supabase.co';
-const SB_KEY='sb_publishable_3XDfV-YAelqb9OE46m_2tA_4gDGHaSk';
-const TERMS='1.2';
-const STORE='gti_missions_session_v1';
-const AVATAR_BUCKET='gti-missions-avatars';
-const CHECKIN_BUCKET='gti-missions-checkins';
+const {
+  supabaseUrl:SB_URL,
+  supabasePublishableKey:SB_KEY,
+  termsVersion:TERMS,
+  sessionStorageKey:STORE,
+  avatarBucket:AVATAR_BUCKET,
+  checkinBucket:CHECKIN_BUCKET,
+  maxAvatarBytes:MAX_AVATAR_BYTES,
+  supportedImageTypes:SUPPORTED_IMAGE_TYPES,
+}=window.GTIConfig;
+const {
+  escapeHtml:esc,
+  formatNumber:fmt,
+  clamp,
+  calculateLevel:level,
+  getLevelName:levelName,
+  calculateBmi:bmiValue,
+  getBmiReference:bmiText,
+  calculateSuggestedWater:suggestedWater,
+  getUserSafeError:friendly,
+}=window.GTIDomain;
 const app=document.getElementById('app');
 let session=loadSession();
 const EMPTY={water_today_ml:0,water_target_ml:2000,water_streak:0,activity_streak:0,water_week_days:0,water_week_target:7,exercise_week_days:0,exercise_week_target:3,total_xp:0,monthly_xp:0,badges:0};
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const fmt=n=>Number(n||0).toLocaleString('pt-BR',{maximumFractionDigits:2});
-const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
-const level=xp=>Math.floor(Math.max(0,xp)/500)+1;
-const levelName=xp=>['Ping','Commit','Build','Deploy','Scale','Legend'][Math.min(level(xp)-1,5)];
 const nav=(view,replace=false,extra={})=>{const u=new URL(location.href);u.search='';u.searchParams.set('view',view);Object.entries(extra).forEach(([k,v])=>u.searchParams.set(k,v));u.hash='';history[replace?'replaceState':'pushState']({},'',u);render()};
 window.addEventListener('popstate',render);
 
@@ -29,9 +39,6 @@ async function rpc(name,args={}){return request('/rest/v1/rpc/'+name,{method:'PO
 async function stats(){try{return {...EMPTY,...await rpc('gti_missions_my_stats')}}catch{return {...EMPTY}}}
 async function isAdmin(){try{return !!(await rpc('gti_missions_is_admin'))}catch{return false}}
 async function customStatuses(){try{return await rpc('gti_missions_custom_challenge_statuses')||[]}catch{return []}}
-function bmiValue(heightCm,weightKg){const h=Number(heightCm)/100,w=Number(weightKg);if(!h||!w||h<=0)return null;return w/(h*h)}
-function bmiText(v){if(!v)return'Preencha altura e peso';if(v<18.5)return'Abaixo da faixa de referência';if(v<25)return'Faixa de referência geral';if(v<30)return'Acima da faixa de referência';return'Bem acima da faixa de referência'}
-function suggestedWater(weightKg){const w=Number(weightKg);if(!w)return null;return Math.round(clamp(w*35,1500,4000)/25)*25}
 function avatarFallback(name,size='normal'){return `<div class="avatar ${size==='small'?'avatar-small':''}">${esc((name||'G')[0].toUpperCase())}</div>`}
 function storageUrl(url){if(!url)return null;if(url.startsWith('/object/'))return `${SB_URL}/storage/v1${url}`;try{return new URL(url,SB_URL).href}catch{return null}}
 async function authenticatedImage(bucket,path){const p=path.split('/').map(encodeURIComponent).join('/');const response=await request(`/storage/v1/object/authenticated/${bucket}/${p}`,{raw:true});const blob=await response.blob();if(!blob.type.startsWith('image/'))throw new Error('Arquivo de imagem inválido.');return URL.createObjectURL(blob)}
@@ -39,8 +46,8 @@ async function signedAvatar(path){if(!path)return null;try{return await authenti
 async function avatarHtml(path,name,size='normal'){const url=await signedAvatar(path);if(!url)return avatarFallback(name,size);return `<img class="avatar ${size==='small'?'avatar-small':''}" src="${esc(url)}" alt="Foto de ${esc(name)}">`}
 async function uploadAvatar(file,userId){
   if(!file)return null;
-  if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Use JPG, PNG ou WEBP.');
-  if(file.size>5*1024*1024)throw new Error('A foto deve ter no máximo 5 MB.');
+  if(!SUPPORTED_IMAGE_TYPES.includes(file.type))throw new Error('Use JPG, PNG ou WEBP.');
+  if(file.size>MAX_AVATAR_BYTES)throw new Error('A foto deve ter no máximo 5 MB.');
   await refreshIfNeeded();
   const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
   const path=`${userId}/avatar-${Date.now()}.${ext}`;
@@ -104,8 +111,6 @@ function shell(content,active='app'){
 }
 function bindNav(){document.querySelectorAll('[data-nav]').forEach(a=>a.onclick=e=>{e.preventDefault();nav(a.dataset.nav)})}
 async function requirePlayer(){const u=await authUser();if(!u||u.is_anonymous){nav('login',true);return null}const p=await profile();if(!p?.accepted_terms_at||p.terms_version!==TERMS){nav('onboarding',true);return null}return {u,p}}
-function friendly(e){const m=(e?.message||'').toLowerCase();if(m.includes('invalid login'))return'E-mail ou senha inválidos.';if(m.includes('email not confirmed'))return'Confirme seu e-mail antes de entrar.';if(m.includes('rate limit'))return'Muitas tentativas. Tente novamente mais tarde.';if(m.includes('duplicate')||e?.code==='23505')return'Esse @username já está em uso.';if(m.includes('terms'))return'Atualize e aceite os Termos para continuar.';if(m.includes('admin required'))return'Essa ação é exclusiva da administração.';if(m.includes('camera proof required'))return'Tire uma foto agora para validar o check.';if(m.includes('invalid or expired camera proof'))return'A foto do check não foi validada. Tire outra foto agora.';if(m.includes('permission denied')&&m.includes('camera'))return'Permita o acesso à câmera para fazer o check.';return e?.message||'Não foi possível concluir agora.'}
-
 async function render(){if(captureHash())return render();const url=new URL(location.href),view=url.searchParams.get('view')||'home';app.innerHTML='<main class="center"><div class="loader"></div><p>Carregando missão...</p></main>';try{if(view==='home')return window.GTIUniverseUI?.renderHome?.()||renderHome();if(view==='login')return renderLogin();if(view==='forgot')return renderForgot();if(view==='reset')return renderReset();if(view==='terms')return renderTerms();if(view==='privacy')return renderPrivacy();if(view==='onboarding')return renderOnboarding();const player=await requirePlayer();if(!player)return;if(view==='app')return window.GTIUniverseUI.renderDashboard(player);if(view==='challenges')return window.GTIUniverseUI.renderChallenges(player);if(view==='reading')return window.GTIUniverseUI.renderReading(player);if(view==='offline')return window.GTIUniverseUI.renderOffline(player);if(view==='achievements')return window.GTIUniverseUI.renderAchievements(player,url.searchParams.get('type')||'global');if(view==='progress')return window.GTIUniverseUI.renderProgress(player);if(view==='aqua')return renderAqua();if(view==='tech')return window.GTIUniverseUI.renderTech(player);if(view==='league')return window.GTIUniverseUI.renderLeague(player,url.searchParams.get('type')||'global',url.searchParams.get('period')||'month');if(view==='profile')return renderProfile();if(view==='admin')return renderAdmin();if(view==='challenge')return renderCustomChallenge(url.searchParams.get('id'));return window.GTIUniverseUI.renderDashboard(player)}catch(e){app.innerHTML=`<main class="auth-page"><section class="auth-card"><div class="brand-pill">ERRO</div><h1>Deu ruim nessa missão.</h1><p>${esc(friendly(e))}</p><button class="primary" id="retry">Tentar novamente</button></section></main>`;document.getElementById('retry').onclick=render}}
 
 async function renderHome(){

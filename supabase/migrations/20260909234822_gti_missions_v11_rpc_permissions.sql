@@ -1,0 +1,27 @@
+revoke all on function public.gti_missions_is_admin() from public,anon;
+revoke all on function public.gti_missions_admin_bootstrap_open() from public,anon;
+revoke all on function public.gti_missions_claim_admin(text) from public,anon;
+revoke all on function public.gti_missions_admin_create_challenge(text,text,text,text,text,numeric,integer,integer,integer,date,date) from public,anon;
+revoke all on function public.gti_missions_admin_toggle_challenge(uuid,boolean) from public,anon;
+revoke all on function public.gti_missions_join_challenge(uuid) from public,anon;
+revoke all on function public.gti_missions_log_custom_challenge(uuid,numeric,text) from public,anon;
+revoke all on function public.gti_missions_custom_challenge_statuses() from public,anon;
+revoke all on function public.gti_missions_log_water(integer) from public,anon;
+revoke all on function public.gti_missions_log_exercise(text,integer) from public,anon;
+revoke all on function public.gti_missions_my_stats() from public,anon;
+revoke all on function public.gti_missions_leaderboard() from public,anon;
+revoke all on function public.gti_missions_delete_my_data() from public,anon;
+
+grant execute on function public.gti_missions_is_admin() to authenticated;
+grant execute on function public.gti_missions_admin_bootstrap_open() to authenticated;
+grant execute on function public.gti_missions_claim_admin(text) to authenticated;
+grant execute on function public.gti_missions_admin_create_challenge(text,text,text,text,text,numeric,integer,integer,integer,date,date) to authenticated;
+grant execute on function public.gti_missions_admin_toggle_challenge(uuid,boolean) to authenticated;
+grant execute on function public.gti_missions_join_challenge(uuid) to authenticated;
+grant execute on function public.gti_missions_log_custom_challenge(uuid,numeric,text) to authenticated;
+grant execute on function public.gti_missions_custom_challenge_statuses() to authenticated;
+grant execute on function public.gti_missions_log_water(integer) to authenticated;
+grant execute on function public.gti_missions_log_exercise(text,integer) to authenticated;
+grant execute on function public.gti_missions_my_stats() to authenticated;
+grant execute on function public.gti_missions_leaderboard() to authenticated;
+grant execute on function public.gti_missions_delete_my_data() to authenticated;
