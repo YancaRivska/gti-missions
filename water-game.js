@@ -71,10 +71,12 @@
       <div class="water-game">
         <header class="aquaxp-screen-head">
           <button class="screen-back" data-nav="challenges" aria-label="Voltar">‹</button>
-          <div><h1><span>💧</span> Desafio da Água</h1><p>Hidratação hoje. Mais conquistas amanhã.</p></div>
+          <div><h1><span>💧</span> AquaXP League</h1><p>Hidratação hoje. Mais conquistas amanhã.</p></div>
           <button class="screen-alert" data-nav="profile" aria-label="Abrir perfil">${avatar}</button>
         </header>
 
+        <section class="aqua-hero"><div><small>MUNDO ÁGUA</small><h2>Hidratação hoje.<br>Mais energia amanhã.</h2><p>Pequenas escolhas,<br>grandes resultados.</p></div><img src="/assets/challenges/aquaxp/chalote-aquaxp-v1.webp" alt="Mascote rosa com sua garrafa de água" width="720" height="960"></section>
+        <section class="hydration-progress"><div class="hydration-ring" style="--hydration:${todayPct}%" role="progressbar" aria-label="Meta diária de hidratação" aria-valuenow="${todayPct}" aria-valuemin="0" aria-valuemax="100"><div><span>💧</span><b>${fmt(today)} ml</b><small>${todayPct}%</small></div></div><div><small>META DIÁRIA</small><h2>${fmt(target)} ml</h2><a class="primary" href="#waterCheck">Registrar água ↓</a></div></section>
         <section class="aquaxp-status-row">
           <div><span>🔥</span><b>${streak}</b><small>dias seguidos</small></div>
           <div><span>⚡</span><b>${fmt(totalXp)}</b><small>XP total</small></div>
