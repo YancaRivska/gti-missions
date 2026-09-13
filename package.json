@@ -1,0 +1,32 @@
+{
+  "name": "gti-missions",
+  "version": "5.0.0",
+  "description": "Aplicativo web da comunidade Galera do TI para miss\u00f5es, h\u00e1bitos, XP, selos e ranking mensal.",
+  "main": "app.js",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --experimental-vm-modules --test test/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YancaRivska/gti-missions.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/YancaRivska/gti-missions/issues"
+  },
+  "homepage": "https://github.com/YancaRivska/gti-missions#readme",
+  "devDependencies": {
+    "eslint": "9.39.1",
+    "globals": "16.5.0",
+    "happy-dom": "20.8.4",
+    "typescript": "5.9.3"
+  },
+  "private": true
+}

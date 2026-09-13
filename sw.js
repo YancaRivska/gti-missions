@@ -1,6 +1,6 @@
-const CACHE='gti-missions-v13';
-const CORE=['/','/style.css?v=4.1.0','/water-game.js?v=4.1.0','/app.js?v=4.1.0','/universe-ui.js?v=4.1.0','/manifest.webmanifest?v=4.1.0','/assets/ui/gti-missions-logo.svg','/assets/water/adventure-map-v1.webp','/assets/mascot/chalote-hero-v1.webp','/assets/mascot/scarlote-cyber-v1.webp','/assets/challenges/aquaxp/chalote-aquaxp-v1.webp','/assets/challenges/rat-tech/chalote-rat-tech-v1.webp','/assets/challenges/reading/chalote-reading-v1.webp','/assets/challenges/screen-free/chalote-screen-free-v1.webp','/icon.svg','/offline.html'];
-const CORE_PATHS=new Set(['/style.css','/water-game.js','/app.js','/universe-ui.js','/manifest.webmanifest','/assets/ui/gti-missions-logo.svg','/assets/water/adventure-map-v1.webp','/assets/mascot/chalote-hero-v1.webp','/assets/mascot/scarlote-cyber-v1.webp','/assets/challenges/aquaxp/chalote-aquaxp-v1.webp','/assets/challenges/rat-tech/chalote-rat-tech-v1.webp','/assets/challenges/reading/chalote-reading-v1.webp','/assets/challenges/screen-free/chalote-screen-free-v1.webp','/icon.svg','/offline.html']);
+const CACHE='gti-missions-v5-refinement';
+const CORE=['/offline.html','/icon.svg'];
+const CORE_PATHS=new Set(['/product.js','/share-achievement.js','/style.css','/water-game.js','/app.js','/universe-ui.js','/manifest.webmanifest','/assets/ui/gti-missions-logo.svg','/assets/water/adventure-map-v1.webp','/assets/mascot/chalote-hero-v1.webp','/assets/mascot/scarlote-cyber-v1.webp','/assets/challenges/aquaxp/chalote-aquaxp-v1.webp','/assets/challenges/rat-tech/chalote-rat-tech-v1.webp','/assets/challenges/reading/chalote-reading-v1.webp','/assets/challenges/screen-free/chalote-screen-free-v1.webp','/icon.svg','/offline.html']);
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).catch(()=>{}));
@@ -19,7 +19,7 @@ async function networkFirst(request,fallback){
     if(response.ok)await cache.put(request,response.clone());
     return response;
   }catch{
-    return (await cache.match(request,{ignoreSearch:true}))||(fallback&&await cache.match(fallback));
+    return (await cache.match(request))||(fallback&&await cache.match(fallback))||new Response('Offline',{status:503});
   }
 }
 
@@ -32,5 +32,6 @@ self.addEventListener('fetch',event=>{
     event.respondWith(networkFirst(request,'/offline.html'));
     return;
   }
+  if(url.pathname.startsWith('/assets/')){event.respondWith(caches.open(CACHE).then(async cache=>{const hit=await cache.match(request);if(hit)return hit;const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response;}));return;}
   if(CORE_PATHS.has(url.pathname))event.respondWith(networkFirst(request));
 });

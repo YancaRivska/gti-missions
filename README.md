@@ -1,42 +1,46 @@
 # GTI Missions
 
-Aplicativo web da comunidade Galera do TI para missões, hábitos, XP, selos e ranking mensal.
+Aplicativo web mobile-first da comunidade Galera do TI para missões mensais, hábitos, XP, níveis, emblemas e ranking.
 
 Produção: <https://gti-missions-yanca-rivska.vercel.app/>
 
 ## Funcionalidades
 
-- AquaXP com meta fixa de 7 dias por semana.
-- Jornada visual AquaXP com mapa, quatro mundos, missões e conquistas alimentados pelo progresso real do player.
-- RAT Tech com frequência configurável de 3 a 7 dias.
-- Novos desafios publicados pela administração e exibidos automaticamente para a comunidade.
-- Check do AquaXP, RAT Tech e desafios com foto capturada pela câmera, sem galeria e com disponibilidade máxima de 24 horas.
-- Foto de perfil anexada da galeria ou capturada pela câmera, armazenada em bucket privado e exibida somente para participantes autenticados.
-- Ofensiva calculada pelos dias consecutivos em que o player conquistou XP.
-- Login, perfil, ranking, PWA e modo offline básico.
+- AquaXP com recipientes configuráveis, conclusão automática da meta e sem envio de evidência.
+- RAT Tech com confirmação antes de concluir o treino e frequência semanal configurável.
+- Temporadas mensais configuradas no Supabase, com código opcional, XP mensal e histórico permanente.
+- 30 emblemas de água e 30 de treino, incluindo conquistas secretas e compartilhamento em Story ou formato quadrado.
+- Ranking mensal paginado, comunidade e perfis públicos com controles de privacidade.
+- Meu Diário com notas curtas privadas por padrão e publicação opcional.
+- Desafios criados pela administração e exibidos sem alterar o frontend.
+- Foto de perfil opcional em bucket privado; imagens são reduzidas no navegador antes do envio.
+- Ofensiva calculada no servidor com calendário consistente em `America/Sao_Paulo`.
+- Login, PWA e modo offline básico.
 
 ## Arquitetura
 
-O frontend é estático (`index.html`, `app.js`, `water-game.js` e `style.css`) e é publicado na Vercel. Autenticação, banco, RPCs, RLS, Storage e a limpeza automática das fotos usam Supabase.
+O frontend é estático e não possui dependências de runtime. O Supabase concentra Auth, Postgres, RLS, Storage de avatar e operações transacionais de progressão. A Vercel publica o conteúdo gerado em `dist/`.
 
-A arte original do mapa AquaXP fica em `assets/water/adventure-map-v1.webp`. Ela foi criada especificamente para o GTI Missions e otimizada para carregamento em dispositivos móveis.
+A chave presente no frontend é somente a chave pública/publishable. Segredos administrativos e códigos de temporada não são enviados ao cliente.
 
-O projeto Supabase ativo já está provisionado. A chave presente no frontend é a chave pública/publishable; chaves administrativas nunca devem ser adicionadas ao repositório.
-
-## Desenvolvimento local
-
-Sirva esta pasta com qualquer servidor HTTP estático. Por exemplo:
+## Desenvolvimento e validação
 
 ```bash
-npx serve .
+npm install
+npm run check
 ```
 
-Não abra `index.html` diretamente via `file://`, pois autenticação, Service Worker e câmera dependem de uma origem HTTP segura.
+`npm run check` executa lint, checagem de tipos, testes automatizados e o build de produção. Para servir a aplicação localmente:
+
+```bash
+npm run build
+npx serve dist
+```
+
+As alterações de banco ficam em `supabase/migrations/`; os testes transacionais ficam em `supabase/tests/`.
 
 ## Deploy
 
-A Vercel publica automaticamente a raiz deste repositório a cada atualização da branch `main`, sem comando de build e sem diretório de saída. O arquivo `vercel.json` configura os cabeçalhos de segurança e `/api/health`.
+A Vercel executa `npm run build` e publica `dist/`. O arquivo `vercel.json` mantém os cabeçalhos de segurança e o endpoint `/api/health`.
 
-## Supabase
-
-A função agendada de limpeza está em `supabase/functions/cleanup-gti-missions-checkins`. No ambiente ativo, o Cron executa a função a cada hora e remove provas com mais de 24 horas.
+O antigo fluxo de fotos de evidência foi removido. O bucket de avatar continua privado e funcional.

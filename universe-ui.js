@@ -47,11 +47,11 @@
   }
 
   async function renderDashboard(player){
-    const [s,statuses,ranking,admin]=await Promise.all([
-      universeStats(),customStatuses(),rpc('gti_missions_challenge_leaderboard',{p_challenge:'global',p_period:'month'}),isAdmin()
+    const [s,statuses,season,admin]=await Promise.all([
+      stats(),customStatuses(),rpc('gti_missions_current_season'),isAdmin()
     ]);
     const worlds=firstParty(statuses),avatar=await avatarHtml(player.p.avatar_path,player.p.display_name,'small');
-    const userRank=(ranking||[]).find(row=>row.user_id===player.u.id)?.rank||'—';
+    const userRank=s.monthly_rank||'—';
     const xpInLevel=Number(s.total_xp||0)%500,xpPct=pct(xpInLevel,500);
     const activeCount=2+Number(!!worlds.reading?.joined)+Number(!!worlds.offline?.joined);
     const weeklyParts=[pct(s.water_week_days,7),pct(s.exercise_week_days,s.exercise_week_target)];
@@ -60,7 +60,7 @@
     const overall=Math.round(weeklyParts.reduce((a,b)=>a+b,0)/Math.max(1,weeklyParts.length));
     app.innerHTML=shell(`<div class="reference-home">
       <header class="home-brandbar"><button class="icon-only" data-nav="challenges" aria-label="Abrir desafios">☰</button>${brandLogo(true)}<button class="icon-only" aria-label="Notificações">♢</button></header>
-      <section class="home-greeting"><div><h1>Olá, ${esc(player.p.display_name.split(' ')[0])}!</h1><p>Disciplina hoje, um amanhã extraordinário.</p></div>${admin?'<button class="admin-chip" id="adminBtn">ADM</button>':''}</section>
+      <button class="secondary full" data-nav="seasons">${esc(season.name)}${season.requires_code&&!season.joined?' • Inserir código':''}</button><section class="home-greeting"><div><h1>Olá, ${esc(player.p.display_name.split(' ')[0])}!</h1><p>Disciplina hoje, um amanhã extraordinário.</p></div>${admin?'<button class="admin-chip" id="adminBtn">ADM</button>':''}</section>
       <section class="compact-player-card">
         <div class="player-avatar-wrap">${avatar}<span>${level(s.total_xp)}</span></div>
         <div><small>NÍVEL ${level(s.total_xp)} • ${levelName(s.total_xp)}</small><b>${fmt(s.total_xp)} / ${fmt((Math.floor(Number(s.total_xp||0)/500)+1)*500)} XP</b>${progressBar(xpPct,'Progresso do nível')}</div>
@@ -78,7 +78,7 @@
         <div><small>PROGRESSO GERAL</small><b>Suas missões desta semana</b><p>${activeCount} mundos ativos • ofensiva de ${s.activity_streak||0} dias</p></div><i>›</i>
       </button>
       <section class="home-stat-row"><div><span>🔥</span><b>${s.activity_streak||0}</b><small>dias seguidos</small></div><div><span>♛</span><b>#${userRank}</b><small>ranking</small></div><div><span>✦</span><b>${s.badges||0}</b><small>conquistas</small></div></section>
-      <button class="primary aurora-button full journey-button" data-nav="challenges">Continuar minha jornada →</button>
+      <section class="rule-card"><b>Hoje</b><p>Água: ${fmt(s.water_today_ml)} / ${fmt(s.water_target_ml)} ml • ${s.exercise_today_completed?'Treino concluído':'Treino pendente'}</p><p>${fmt(s.monthly_xp)} XP nesta temporada</p><button class="secondary" data-nav="collection">${s.next_badge?'Próximo emblema: '+esc(s.next_badge):'Minha coleção'}</button></section><button class="primary aurora-button full journey-button" data-nav="challenges">Continuar minha jornada →</button>
       ${community(statuses).length?`<section class="community-mini"><small>MISSÕES DA COMUNIDADE</small>${community(statuses).slice(0,2).map(c=>`<button data-challenge="${c.id}"><span>${esc(c.icon)}</span><div><b>${esc(c.title)}</b><small>${c.joined?`${c.week_completed_days}/${c.weekly_target_days} nesta semana`:'Nova missão disponível'}</small></div><i>›</i></button>`).join('')}</section>`:''}
     </div>`,'app');
     bindNav();
@@ -114,18 +114,26 @@
       <section class="world-progress-card"><div><small>META DA SEMANA</small><b>${s.exercise_week_days||0} de ${s.exercise_week_target||3} dias de treino</b></div><span>${weekPct}%</span>${progressBar(weekPct,'Meta semanal de treino')}</section>
       <section class="mission-link-list daily-missions"><small>MISSÕES DE TREINO</small><article><span>⚔</span><div><b>Complete o treino de hoje</b><small>5–19 min: +15 XP • 20+ min: +30 XP</small></div><i>${s.exercise_week_days? '✓':'+'}</i></article><article><span>🏅</span><div><b>Conquiste a semana</b><small>Treine ${s.exercise_week_target||3} dias e ganhe +100 XP</small></div><i>${s.exercise_week_days>=s.exercise_week_target?'✓':'›'}</i></article></section>
       <button class="primary aurora-button full world-primary-action" id="openRatRegister" type="button">Registrar meu treino →</button>
-      <section class="world-form-card register-sheet" id="ratRegister" hidden><div class="form-card-title"><span>📸</span><div><small>PROVA DO TREINO</small><h2>Registrar treino</h2></div></div><p>A foto é tirada agora, fica privada e desaparece após 24 horas.</p><button class="secondary full camera-cta" id="openCamera" type="button">📷 Abrir câmera</button><div id="cameraMount"></div><div id="cameraMsg"></div><form id="ratForm"><label>Atividade<select id="ratActivity"><option>Academia</option><option>Corrida</option><option>Caminhada</option><option>Ciclismo</option><option>Alongamento</option><option>Funcional</option><option>Esporte</option><option>Outro treino</option></select></label><label>Duração (minutos)<input id="ratMinutes" type="number" min="1" max="300" value="30" inputmode="numeric" required></label><button class="primary aurora-button full">Registrar meu treino →</button></form><div id="ratMsg" aria-live="polite"></div></section>
+      <section class="world-form-card register-sheet" id="ratRegister" hidden><div class="form-card-title"><span>📸</span><div><small>TREINO DE HOJE</small><h2>Registrar treino</h2></div></div><form id="ratForm"><label>Atividade<select id="ratActivity"><option>Academia</option><option>Corrida</option><option>Caminhada</option><option>Ciclismo</option><option>Alongamento</option><option>Funcional</option><option>Esporte</option><option>Outro treino</option></select></label><label>Duração (minutos)<input id="ratMinutes" type="number" min="5" max="300" value="30" inputmode="numeric" required></label><button class="primary aurora-button full">Concluir treino de hoje</button></form><div id="ratMsg" aria-live="polite"></div></section>
     </div>`,'tech');
     bindNav();
     const ratRegister=document.getElementById('ratRegister');
     document.getElementById('openRatRegister').onclick=()=>{ratRegister.hidden=false;ratRegister.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})};
-    const proof=bindProofCamera(),form=document.getElementById('ratForm');
-    form.onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('ratMsg'),button=event.submitter;let path=null;if(!proof.blob){msg.innerHTML='<div class="notice">Abra a câmera e tire uma foto do treino primeiro.</div>';return}try{button.disabled=true;path=await uploadCheckinPhoto(proof.blob,u.id,'tech');const result=await rpc('gti_missions_log_exercise',{p_exercise_name:document.getElementById('ratActivity').value,p_duration_minutes:+document.getElementById('ratMinutes').value,p_photo_path:path});msg.innerHTML=`<div class="success">Treino registrado${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} ⚡</div>`;setTimeout(()=>renderTech(),500)}catch(error){if(path)await discardCheckinPhoto(path);button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
+    const form=document.getElementById('ratForm');
+    form.onsubmit=async event=>{
+      event.preventDefault();
+      if(!confirm('Concluir o treino de hoje? Essa confirmação registra sua atividade.'))return;
+      const msg=document.getElementById('ratMsg'),button=event.submitter||form.querySelector('button');
+      try{button.disabled=true;const result=await rpc('gti_missions_submit_exercise',{p_exercise_name:document.getElementById('ratActivity').value,p_duration_minutes:+document.getElementById('ratMinutes').value});msg.textContent=result.already_completed?'Seu treino de hoje já está concluído.':`Treino concluído! +${result.xp_awarded||0} XP`;
+      await (await import('/product.js?v=5')).showAchievements(result.unlocked_badges,await profile());await renderTech();
+      }catch(error){button.disabled=false;msg.textContent=friendly(error);}
+    };
+
   }
 
   async function challengeHistory(id,userId){
     if(!id)return [];
-    try{return await request(`/rest/v1/gti_missions_challenge_entries?challenge_id=eq.${encodeURIComponent(id)}&user_id=eq.${encodeURIComponent(userId)}&select=entry_day,value,note,completed_at&order=entry_day.desc&limit=60`)||[]}
+    try{return await request(`/rest/v1/gti_missions_challenge_entries?challenge_id=eq.${encodeURIComponent(id)}&user_id=eq.${encodeURIComponent(userId)}&select=entry_day,value,note,completed_at&order=entry_day.desc&limit=10`)||[]}
     catch{return []}
   }
 
@@ -147,7 +155,7 @@
     bindNav();
     const readingRegister=document.getElementById('readingRegister');
     document.getElementById('openReadingRegister').onclick=()=>{readingRegister.hidden=false;readingRegister.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})};
-    document.getElementById('readingForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('readingMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_log_custom_challenge',{p_challenge_id:challenge.id,p_value:+document.getElementById('readPages').value,p_note:document.getElementById('bookTitle').value.trim(),p_photo_path:null});msg.innerHTML=`<div class="success">Leitura registrada${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 📖</div>`;setTimeout(()=>renderReading(player),500)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
+    document.getElementById('readingForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('readingMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_submit_custom',{p_challenge_id:challenge.id,p_value:+document.getElementById('readPages').value,p_note:document.getElementById('bookTitle').value.trim(),p_request_id:crypto.randomUUID()});msg.innerHTML=`<div class="success">Leitura registrada${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 📖</div>`;setTimeout(()=>renderReading(player),500)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
   }
 
   async function renderOffline(player){
@@ -168,7 +176,7 @@
     bindNav();
     const offlineRegister=document.getElementById('offlineRegister');
     document.getElementById('openOfflineRegister').onclick=()=>{offlineRegister.hidden=false;offlineRegister.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})};
-    document.getElementById('offlineForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('offlineMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_log_custom_challenge',{p_challenge_id:challenge.id,p_value:+document.getElementById('offlineMinutes').value,p_note:document.getElementById('offlineActivity').value,p_photo_path:null});msg.innerHTML=`<div class="success">Momento offline registrado${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 🌿</div>`;setTimeout(()=>renderOffline(player),500)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
+    document.getElementById('offlineForm').onsubmit=async event=>{event.preventDefault();const msg=document.getElementById('offlineMsg'),button=event.submitter;try{button.disabled=true;if(!challenge.joined)await rpc('gti_missions_join_challenge',{p_challenge_id:challenge.id});const result=await rpc('gti_missions_submit_custom',{p_challenge_id:challenge.id,p_value:+document.getElementById('offlineMinutes').value,p_note:document.getElementById('offlineActivity').value,p_request_id:crypto.randomUUID()});msg.innerHTML=`<div class="success">Momento offline registrado${result?.xp_awarded?` • +${result.xp_awarded} XP`:''} 🌿</div>`;setTimeout(()=>renderOffline(player),500)}catch(error){button.disabled=false;msg.innerHTML=`<div class="notice">${esc(friendly(error))}</div>`}};
   }
 
   function badgeCard(item){return `<article class="achievement-hex ${item.unlocked?'unlocked':'locked'} ${item.rare?'rare':''}"><div class="hex-icon"><span>${item.unlocked?item.icon:'▣'}</span></div><b>${esc(item.title)}</b><small>${esc(item.description)}</small>${item.unlocked?'<i>✓</i>':'<i>⌁</i>'}</article>`}
@@ -260,11 +268,11 @@
   async function renderLeague(player,type='global',period='month'){
     const validTypes=['global','aqua','rat-tech','reading','screen-free'],validPeriods=['week','month','all'];
     const current=validTypes.includes(type)?type:'global',range=validPeriods.includes(period)?period:'month';
-    const rows=await rpc('gti_missions_challenge_leaderboard',{p_challenge:current,p_period:range});
+    const rows=await rpc('gti_missions_ranking_page',{p_challenge:current,p_period:range,p_offset:0});
     const cards=[];
     for(const row of rows||[]){
-      const avatar=await avatarHtml(row.avatar_path,row.display_name,'small'),medal=Number(row.rank)===1?'♛':Number(row.rank)===2?'♜':Number(row.rank)===3?'♝':row.rank;
-      cards.push(`<article class="ranking-row ${row.user_id===player.u.id?'me':''}"><strong>${medal}</strong><div class="ranking-user">${avatar}<div><b>${esc(row.display_name)}</b><small>@${esc(row.username)}${current==='global'?` • ${row.participating_challenges} mundo${Number(row.participating_challenges)===1?'':'s'}`:''}</small></div></div><span>${rankingScore(row,current)}${current!=='global'&&row.xp?`<small>${fmt(row.xp)} XP</small>`:''}</span></article>`);
+      const avatar=avatarFallback(row.display_name,'small'),medal=Number(row.rank)===1?'♛':Number(row.rank)===2?'♜':Number(row.rank)===3?'♝':row.rank;
+      cards.push(`<article class="ranking-row ${row.username===player.p.username?'me':''}"><strong>${medal}</strong><div class="ranking-user">${avatar}<div><button class="link-btn" data-member="${esc(row.username)}">${esc(row.display_name)}</button><small>@${esc(row.username)}${current==='global'?` • ${row.participating_challenges} mundo${Number(row.participating_challenges)===1?'':'s'}`:''}</small></div></div><span>${rankingScore(row,current)}${current!=='global'&&row.xp?`<small>${fmt(row.xp)} XP</small>`:''}</span></article>`);
     }
     const titles={global:['🏆','Ranking Geral','Todos os exploradores. Um futuro maior.'],aqua:['💧','Ranking da Água','Juntos por um amanhã mais saudável.'],'rat-tech':['⚡','Ranking RAT Tech','Mais movimento. Mais energia.'],reading:['▣','Ranking da Leitura','Mais livros. Mais horizontes.'],'screen-free':['♧','Ranking Sem Tela','Mais vida real. Mais bem-estar.']};
     const [icon,title,subtitle]=titles[current];
@@ -274,10 +282,13 @@
       <nav class="period-tabs">${[['week','Esta semana'],['month','Este mês'],['all','Geral']].map(([id,label])=>`<button class="${range===id?'active':''}" data-ranking-period="${id}">${label}</button>`).join('')}</nav>
       ${current==='global'?`<section class="ranking-explainer has-scar"><span>✦</span><p>O ranking geral soma o XP dos desafios em que cada pessoa participa. Ninguém perde posição por não entrar em um mundo.</p><img src="${ASSETS.scarlote}" alt="Scarlote no ranking geral" width="720" height="901"></section>`:''}
       <div class="ranking-columns"><span>#</span><span>EXPLORADOR</span><span>${current==='global'?'XP':'PROGRESSO'}</span></div>
-      <section class="ranking-list">${cards.length?cards.join(''):'<div class="empty">Ainda não há progresso neste ranking.</div>'}</section>
+      <section class="ranking-list" id="rankingList">${cards.length?cards.join(''):'<div class="empty">Ainda não há progresso neste ranking.</div>'}</section><button class="secondary full" id="moreRanking" ${rows.length<20?'hidden':''}>Ver mais participantes</button>
       <blockquote>${current==='aqua'?'“Cada gole conta.”':current==='rat-tech'?'“Movimento hoje. Energia amanhã.”':current==='reading'?'“Grandes leitores constroem grandes futuros.”':current==='screen-free'?'“Menos tela. Mais do que realmente importa.”':'“A evolução fica maior quando é coletiva.”'}</blockquote>
     </div>`,'league');
     bindNav();
+    let rankOffset=rows.length;
+    const bindMembers=()=>document.querySelectorAll('[data-member]').forEach(b=>b.onclick=()=>nav('member',false,{username:b.dataset.member}));bindMembers();
+    document.getElementById('moreRanking').onclick=async e=>{const b=e.currentTarget;b.disabled=true;try{const more=await rpc('gti_missions_ranking_page',{p_challenge:current,p_period:range,p_offset:rankOffset});rankOffset+=more.length;document.getElementById('rankingList').insertAdjacentHTML('beforeend',more.map(row=>`<article class="ranking-row"><strong>${row.rank}</strong><div class="ranking-user">${avatarFallback(row.display_name,'small')}<div><button class="link-btn" data-member="${esc(row.username)}">${esc(row.display_name)}</button><small>@${esc(row.username)}</small></div></div><span>${rankingScore(row,current)}</span></article>`).join(''));b.hidden=more.length<20;bindMembers();}catch(error){b.textContent='Não foi possível carregar. Tentar novamente';}finally{b.disabled=false;}};
     document.querySelectorAll('[data-ranking-type]').forEach(button=>button.onclick=()=>nav('league',false,{type:button.dataset.rankingType,period:range}));
     document.querySelectorAll('[data-ranking-period]').forEach(button=>button.onclick=()=>nav('league',false,{type:current,period:button.dataset.rankingPeriod}));
   }

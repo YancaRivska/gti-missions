@@ -36,7 +36,6 @@
   async function render(ctx) {
     const {
       app, s, p, u, avatar, fmt, esc, shell, bindNav, rpc,
-      uploadCheckinPhoto, discardCheckinPhoto, bindProofCamera,
       renderAqua, level, levelName,
     } = ctx;
 
@@ -63,14 +62,7 @@
       missionCard({ icon: '🔥', title: 'Manter a ofensiva', description: 'Volte amanhã e mantenha o ritmo.', progress: Math.min(100, (streak / 7) * 100), progressText: `${streak} dia${streak === 1 ? '' : 's'} de sequência`, reward: 'ATIVA', done: streak >= 7 }),
     ].join('');
 
-    const achievements = [
-      achievement({ icon: '💧', title: 'Primeiro Gole', description: 'Faça um registro de água.', unlocked: today > 0 || weekDays > 0 || streak > 0 }),
-      achievement({ icon: '🏅', title: 'Meta Dominada', description: 'Alcance 100% da meta diária.', unlocked: todayPct >= 100 }),
-      achievement({ icon: '🌊', title: 'Explorador da Maré', description: 'Complete 3 dias nesta semana.', unlocked: weekDays >= 3 }),
-      achievement({ icon: '🔥', title: 'Ofensiva 7', description: 'Mantenha uma sequência de 7 dias.', unlocked: streak >= 7, rare: true }),
-      achievement({ icon: '🧊', title: 'Guardião da Semana', description: 'Feche o desafio AquaXP 7/7.', unlocked: weekDays >= 7, rare: true }),
-      achievement({ icon: '⚡', title: 'Explorador Veterano', description: 'Alcance o nível 5 no GTI Missions.', unlocked: currentLevel >= 5 }),
-    ].join('');
+    const achievements='<button class="secondary" data-nav="collection">Minha coleção →</button>';
 
     const runes = Array.from({ length: 7 }, (_, index) => `<i class="${index < weekDays ? 'done' : index === weekDays ? 'current' : ''}"><span>${index + 1}</span></i>`).join('');
     const customAmount = clamp(Number(p.water_container_ml) || 475, 50, 2000);
@@ -108,7 +100,7 @@
           <section class="today-voyage game-panel">
             <div class="section-heading"><div><small>MISSÃO DE HOJE</small><h2>Encha o reservatório</h2></div><strong>${todayPct}%</strong></div>
             <div class="water-meter" role="progressbar" aria-label="Meta de água de hoje" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${todayPct}"><div style="--water-level:${todayPct}%"><span></span></div></div>
-            <div class="meter-copy"><b>${fmt(today)} ml</b><span>de ${fmt(target)} ml</span></div>
+            <div class="meter-copy"><b>${fmt(today)} ml</b><span>/ ${fmt(target)} ml</span></div>${today>=target?'<p class="success" role="status">Meta do dia concluída!</p>':''}
           </section>
 
           <section class="guardian-card">
@@ -133,12 +125,7 @@
         </div>
 
         <section class="water-check game-panel" id="waterCheck">
-          <div class="quest-banner"><span>CHECK-IN DA MISSÃO</span><b>Registre sua água</b><p>Primeiro tire a foto. Depois escolha a quantidade.</p></div>
-          <div class="camera-proof aqua-camera">
-            <div class="section-row"><div><b>Foto da água</b><p>Tirada agora pelo app. A imagem fica privada e desaparece após 24 horas.</p></div><span class="proof-required">OBRIGATÓRIA</span></div>
-            <button class="game-cta cyan full" id="openCamera" type="button">📷 Abrir câmera</button>
-            <div id="cameraMount"></div><div id="cameraMsg"></div>
-          </div>
+          <div class="quest-banner"><span>CHECK-IN DA MISSÃO</span><b>Registre sua água</b><p>Escolha o recipiente que você acabou de beber.</p></div>
           <div class="amount-picker">
             <div class="section-heading"><div><small>QUANTIDADE</small><h2>Quanto você bebeu?</h2></div><span>Hoje: ${fmt(today)} ml</span></div>
             <div class="water-presets">${[200, 250, 300, 350, 475, 500, 750].map(amount => `<button type="button" data-water="${amount}"><span>+</span><b>${amount}</b><small>ml</small></button>`).join('')}<button type="button" data-water="${customAmount}"><span>+</span><b>${customAmount}</b><small>${esc(p.water_container_label || 'Recipiente')}</small></button></div>
@@ -150,7 +137,6 @@
     `, 'aqua');
 
     bindNav();
-    const proof = bindProofCamera();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     document.querySelectorAll('[data-water-tab]').forEach(button => {
@@ -171,30 +157,23 @@
       button.onclick = () => document.getElementById('waterCheck').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     });
 
+    let pendingRequest=null, busy=false;
     async function logWater(amount) {
-      const message = document.getElementById('msg');
-      let path = null;
-      if (!proof.blob) {
-        message.innerHTML = '<div class="notice quest-notice">Tire uma foto da água antes de registrar.</div>';
-        document.getElementById('openCamera').focus();
-        return;
-      }
-
-      const controls = document.querySelectorAll('[data-water], #customWater button');
-      controls.forEach(control => { control.disabled = true; });
-      message.innerHTML = '<div class="notice quest-notice">Enviando a prova e atualizando sua jornada...</div>';
-
-      try {
-        path = await uploadCheckinPhoto(proof.blob, u.id, 'aqua');
-        const result = await rpc('gti_missions_log_water', { p_amount_ml: Number(amount), p_photo_path: path });
-        const reward = Number(result?.xp_awarded) || 0;
-        message.innerHTML = `<div class="success xp-toast"><b>Missão atualizada</b><span>+${fmt(amount)} ml${reward ? ` • +${fmt(reward)} XP` : ''}</span><small>Foto protegida por 24 horas.</small></div>`;
-        setTimeout(() => renderAqua(), reducedMotion ? 150 : 700);
-      } catch (error) {
-        if (path) await discardCheckinPhoto(path);
-        controls.forEach(control => { control.disabled = false; });
-        message.innerHTML = `<div class="notice quest-notice">${esc(ctx.friendly(error))}</div>`;
-      }
+      if(busy)return;
+      const message=document.getElementById('msg'),controls=document.querySelectorAll('[data-water], #customWater button');
+      busy=true;controls.forEach(control=>control.disabled=true);
+      if(!pendingRequest||pendingRequest.amount!==Number(amount))pendingRequest={amount:Number(amount),id:crypto.randomUUID()};
+      const meter=document.querySelector('.meter-copy b'),before=meter.textContent;
+      meter.textContent=fmt(today+Number(amount))+' ml';
+      message.textContent='Salvando registro…';
+      try{
+        const result=await rpc('gti_missions_submit_water',{p_amount_ml:Number(amount),p_request_id:pendingRequest.id});
+        pendingRequest=null;
+        message.innerHTML=`<div class="success">${result.goal_met?'Meta do dia concluída!':'Água registrada!'} +${fmt(result.xp_awarded)} XP</div>`;
+        await (await import('/product.js?v=5')).showAchievements(result.unlocked_badges,p);
+        await renderAqua();
+      }catch(error){meter.textContent=before;message.innerHTML=`<div class="notice">${esc(ctx.friendly(error))}</div>`;}
+      finally{busy=false;controls.forEach(control=>control.disabled=false);}
     }
 
     document.querySelectorAll('[data-water]').forEach(button => {

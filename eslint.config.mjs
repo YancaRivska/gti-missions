@@ -1,0 +1,3 @@
+import globals from 'globals';
+const shared=['app','session','profileRequest','request','rpc','profile','stats','isAdmin','customStatuses','authUser','avatarHtml','avatarFallback','esc','fmt','level','levelName','shell','bindNav','nav','friendly','installSupport','renderAqua','renderHome','render'];
+export default [{ignores:['node_modules/**','dist/**','supabase/functions/**']},{files:['*.js','test/**/*.js'],languageOptions:{ecmaVersion:'latest',sourceType:'module',globals:{...globals.browser,...Object.fromEntries(shared.map(k=>[k,'writable']))}},rules:{'no-undef':'error','no-unreachable':'error','no-constant-condition':'error','no-debugger':'error','no-dupe-args':'error','no-dupe-keys':'error'}}];
