@@ -172,8 +172,9 @@
         const result=await rpc('gti_missions_submit_water',{p_amount_ml:Number(amount),p_request_id:pendingRequest.id});
         pendingRequest=null;
         message.innerHTML=`<div class="success">${result.goal_met?'Meta do dia concluída!':'Água registrada!'} +${fmt(result.xp_awarded)} XP</div>`;
-        await (await import('/product.js?v=5')).showAchievements(result.unlocked_badges,p);
+        await (await import('/product.js?v=5.2.0')).showAchievements(result.unlocked_badges,p);
         await renderAqua();
+        (await import('/product.js?v=5.2.0')).showActivity({title:"AquaXP League",detail:`Hoje bebi ${fmt(amount)} ml de água.`,icon:"💧",xp:result.xp_awarded},p);
       }catch(error){meter.textContent=before;message.innerHTML=`<div class="notice">${esc(ctx.friendly(error))}</div>`;}
       finally{busy=false;controls.forEach(control=>control.disabled=false);}
     }
