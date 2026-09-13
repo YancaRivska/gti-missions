@@ -1,4 +1,4 @@
-const CACHE='gti-missions-v5.0.1-calm-ui';
+const CACHE='gti-missions-v5.1.0-rpg-ui';
 const CORE=['/offline.html','/icon.svg'];
 const CORE_PATHS=new Set(['/product.js','/share-achievement.js','/style.css','/water-game.js','/app.js','/universe-ui.js','/manifest.webmanifest','/assets/ui/gti-missions-logo.svg','/assets/water/adventure-map-v1.webp','/assets/mascot/chalote-hero-v1.webp','/assets/mascot/scarlote-cyber-v1.webp','/assets/challenges/aquaxp/chalote-aquaxp-v1.webp','/assets/challenges/rat-tech/chalote-rat-tech-v1.webp','/assets/challenges/reading/chalote-reading-v1.webp','/assets/challenges/screen-free/chalote-screen-free-v1.webp','/icon.svg','/offline.html']);
 
